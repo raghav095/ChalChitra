@@ -1,0 +1,1 @@
+// Movie validation schema
