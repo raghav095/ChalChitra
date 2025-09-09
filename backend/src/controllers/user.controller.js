@@ -3,13 +3,12 @@ import { User } from "../models/user.model.js"
 import { Apierror } from "../utils/Apierrors.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
+
+
 const userregistration = asyncHandler(async (req, res) => {
         // getting the user details 
         // check if the user is already registered lr not 
         // create a user object in database - make an entry
-
-
-
         const {username,email, password } = req.body
 
 
@@ -42,6 +41,18 @@ const userregistration = asyncHandler(async (req, res) => {
     )
 
 
+
+
+
+
+
+
+
 })
 
+const usersignin  = asyncHandler(async(req , res) => {
+
+        
+        
+})
 export {userregistration}
