@@ -5,6 +5,21 @@ import asyncHandler from "../utils/asyncHandler.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 
 
+const generateAccessandRefreshToken = async (userId) => {
+    try{
+       const user =  await User.findById(userId)
+      const accesstoken = user.generateAccessToken() 
+       const refreshtoken = user.generateRefreshToken()
+       user.refreshtokens = refreshtoken
+       await user.save({ validateBeforeSave : false })
+
+       return {refreshtoken , accesstoken}
+    }
+    catch (error){
+            throw new Apierror(500, "something went wrong while generating refresh and acces tokens")
+    }
+}
+
 const userregistration = asyncHandler(async (req, res) => {
         // getting the user details 
         // check if the user is already registered lr not 
@@ -30,7 +45,7 @@ const userregistration = asyncHandler(async (req, res) => {
         const newuser = await User.create({ email, username, password });
 
         //     retriving the user data from the databse without any senisitive to use it 
-        const newcreateduser = await User.findById(newuser._id).select("-password")
+        const newcreateduser = await User.findById(newuser._id).select("-password -refreshtokens")
 
         if (!newcreateduser) {
                 throw new Apierror(500, "some thing went wrong ")
@@ -52,7 +67,55 @@ const userregistration = asyncHandler(async (req, res) => {
 
 const usersignin  = asyncHandler(async(req , res) => {
 
-        
-        
+        const {username , email , password} = req.body
+
+        if(!username && !email){
+                throw new Apierror(401,"username or email is required")
+
+        }
+
+        const user = await User.findOne({
+                $or:[{username} , {email}]
+        })
+
+        if(!user){
+                throw new Apierror(404 , "user does not exists")
+        }
+
+      const ispasswordvalid = await user.isPasswordCorrect(password)
+
+        console.log("User found:", user);
+        console.log("Password from request:", password);
+        console.log("Password in DB:", user.password);
+       if(!ispasswordvalid){
+        throw new Apierror(401 , "invalid user credentials")
+        }
+
+        const{accesstoken , refreshtoken } = await generateAccessandRefreshToken(user._id);
+
+        const logedinuser = await User.findById(user._id).select("-password -refreshtokens")
+
+        const options = {
+                httpOnly :true ,
+                secure:true
+        }
+
+return res
+.status(200)
+.cookie("accesstoken", accesstoken , options)   
+.cookie("refreshtoken" , refreshtoken, options) 
+.json(
+    new Apiresponse(
+        200,
+        {
+            user:logedinuser ,accesstoken , refreshtoken
+
+        },
+
+        "userloged in succesfully"
+    )
+  )
+
+
 })
-export {userregistration}
+export {userregistration , usersignin}
