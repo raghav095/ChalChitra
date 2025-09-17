@@ -4,7 +4,12 @@
   ],
   "redirects": [
     {
-      "source": "/(.*)",
+      "source": "/www.chalchitra.live/(.*)",
+      "destination": "https://chalchitra.live/$1",
+      "permanent": true
+    },
+    {
+      "source": "/chalchitra.vercel.app/(.*)",
       "destination": "https://chalchitra.live/$1",
       "permanent": true
     }
