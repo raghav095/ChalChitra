@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Register from './Register';
-import newlogo from '../assets/logonew.png';
+import newlogo from '../assets/Chalchitralogo.png'
 import { Link, useLocation } from 'react-router-dom';
 
 
