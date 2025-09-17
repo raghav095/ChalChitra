@@ -1,0 +1,36 @@
+### Node & General
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+### Build Artifacts
+dist/
+backend/.env
+frontend/dist/
+backend/dist/
+
+### VSCode
+.vscode/
+
+### Python
+*.pyc
+__pycache__/
+
+### Databases
+*.sqlite
+*.db
+
+### Environment Files
+.env
+.env.*
+frontend/.env
+frontend/.env.*
+backend/.env
+backend/.env.*
+
+### Frontend
+frontend/node_modules/
+
+### Backend
+backend/node_modules/
