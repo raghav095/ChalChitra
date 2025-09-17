@@ -118,4 +118,70 @@ return res
 
 
 })
-export {userregistration , usersignin}
+
+const logoutuser = asyncHandler(async(req , res) => {
+  await   User.findByIdAndUpdate(
+        req.user._id,{
+            $set:{
+                refreshtokens : undefined
+            }
+        },
+        {
+            new : true,
+        }
+    )
+
+      const options ={
+    httpOnly : true ,
+    secure : true
+  } 
+
+  return res
+  .status(200)
+  .clearCookie("accesstoken" ,options)
+  .clearCookie("refreshtoken" ,options)
+  .json(new Apiresponse(200,{},"user loggedout"))
+})
+
+const refreshaccesstoekn= asyncHandlers(async (req ,res ) => {
+   const incomingrefreshaccesstoken= req.cookies.refreshtokens || req.body.refreshtokens
+
+    if(incomingrefreshaccesstoken){
+        throw new Apierror(401,"unauthorise request")
+    }
+
+try {
+      const decodedrefreshtoken =   jwt.verify(incomingrefreshaccesstoken,process.env.REFRESH_TOKENS_SECRET)
+    
+      const user = await User.findById(decodedrefreshtoken?._id)
+    
+      if(!user){
+            throw new Apierror(401,"invalid refresh token")
+        }
+    
+        if(incomingrefreshaccesstoken !== user?.refreshtokens){
+            throw new Apierror(401,"refresh token is used")
+        }
+    
+        const options = {
+            httpOnly:true,
+            secure:true
+        }
+       const {accesstoken , newrefreshtoken}= await generateAccessandRefreshToken(user._id)
+    
+        return res 
+        .status(200)
+        .cookie("accesstoken" ,accesstoken , options)
+        .cookie("refreshtoken" ,newrefreshtoken , options)
+        .json(
+            new Apiresponse(
+               200 , 
+               {accesstoken,refreshtoken:newrefreshtoken},
+               "access token refreshed succesfully"
+            )
+        )
+} catch (error) {
+    throw new Apierror(401 , "invalid ")
+}
+})
+export {userregistration , usersignin , logoutuser ,refreshaccesstoekn}
