@@ -4,7 +4,10 @@
   ],
   "redirects": [
     {
-      "source": "/www.chalchitra.live/(.*)",
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "www.chalchitra.live" }
+      ],
       "destination": "https://chalchitra.live/$1",
       "permanent": true
     }
