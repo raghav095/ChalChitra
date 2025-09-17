@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chalchitra.live/sitemap.xml
