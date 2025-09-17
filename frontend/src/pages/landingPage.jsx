@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import heroImage from '../assets/download (1).jpeg';
 import React from 'react';
 import Navbar from '../components/navbar.jsx';
@@ -21,6 +22,23 @@ function HeroSection() {
                     Explore free streaming movies, trending web series, and top TV shows online at ChalChitra.
                 </p>
             </div>
+
+            {/* Structured Data for Google (Invisible) */}
+            <Helmet>
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "name": "ChalChitra",
+                        "url": "https://chalchitra.live",
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": "https://chalchitra.live/search?q={search_term_string}",
+                            "query-input": "required name=search_term_string"
+                        }
+                    })}
+                </script>
+            </Helmet>
 
             {/* Existing landing page content */}
             <div className="relative w-full h-screen">
