@@ -10,7 +10,7 @@ const Register = (props) => {
   const navigate = useNavigate();
 
   // Use environment variable for backend URL
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
