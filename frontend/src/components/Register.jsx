@@ -1,64 +1,181 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Register = () => {
-  const [form, setForm] = useState({
-    username: "",
-    email: "",
-    password: ""
-  });
+const Register = (props) => {
+  const [isSignIn, setIsSignIn] = useState(false);
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [signInForm, setSignInForm] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleSignInChange = (e) => {
+    setSignInForm({ ...signInForm, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:4000/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
-      const data = await res.json();
-      alert(data.message || "Registration successful!");
+      if (res.ok) {
+        navigate("/Mainpage");
+      } else {
+        alert("Registration failed");
+      }
     } catch (err) {
-      alert("Registration failed!");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignInSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:4000/users/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signInForm),
+      });
+      if (res.ok) {
+        navigate("/Mainpage");
+      } else {
+        alert("Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={form.username}
-        onChange={handleChange}
-        required
-        className="block w-full mb-2 p-2 border"
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={handleChange}
-        required
-        className="block w-full mb-2 p-2 border"
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={form.password}
-        onChange={handleChange}
-        required
-        className="block w-full mb-2 p-2 border"
-      />
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-        Register
+    <div className="bg-white/10 backdrop-blur-xl border border-blue-400/40 text-white p-8 rounded-3xl shadow-2xl w-96 relative">
+      {/* Close button */}
+      <button
+        onClick={props.onClose}
+        className="absolute top-4 right-4 text-yellow-400 hover:text-white text-2xl font-bold"
+        aria-label="Close"
+      >
+        &times;
       </button>
-    </form>
+
+      <h2 className="text-2xl font-bold mb-4 text-center text-yellow-400 drop-shadow-md">
+        {isSignIn ? "Sign In" : "Create Account"}
+      </h2>
+
+      {/* Register Form */}
+      {!isSignIn && (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={form.username}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            required
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded transition-colors ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {loading ? "Registering..." : "Register"}
+          </button>
+        </form>
+      )}
+
+      {/* Sign In Form */}
+      {isSignIn && (
+        <form onSubmit={handleSignInSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username or Email"
+            value={signInForm.username}
+            onChange={handleSignInChange}
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={signInForm.password}
+            onChange={handleSignInChange}
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            required
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded transition-colors ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+      )}
+
+      {/* Toggle between Register / Sign In */}
+      <div className="mt-4 text-center">
+        {isSignIn ? (
+          <>
+            <span className="text-gray-300">Don't have an account?</span>
+            <button
+              type="button"
+              className="ml-2 text-yellow-400 hover:underline font-semibold"
+              onClick={() => setIsSignIn(false)}
+            >
+              Register
+            </button>
+          </>
+        ) : (
+          <>
+            <span className="text-gray-300">Already registered?</span>
+            <button
+              type="button"
+              className="ml-2 text-blue-400 hover:underline font-semibold"
+              onClick={() => setIsSignIn(true)}
+            >
+              Sign In
+            </button>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 
