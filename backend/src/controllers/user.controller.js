@@ -143,7 +143,7 @@ const logoutuser = asyncHandler(async(req , res) => {
   .json(new Apiresponse(200,{},"user loggedout"))
 })
 
-const refreshaccesstoekn= asyncHandlers(async (req ,res ) => {
+const refreshaccesstoekn= asyncHandler(async (req ,res ) => {
    const incomingrefreshaccesstoken= req.cookies.refreshtokens || req.body.refreshtokens
 
     if(incomingrefreshaccesstoken){

@@ -1,8 +1,8 @@
 // Auth middleware
-import { Apierror } from "../utils/Apierror.js";
-import asyncHandler from "../utils/asyncHandlers.js";
+import { Apierror } from "../utils/Apierrors.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import  Jwt from "jsonwebtoken";
-import { User } from "../models/user.models.js";
+import { User } from "../models/user.model.js";
 
  const verify = asyncHandler(async(req,res,next)=>{
 
