@@ -1,5 +1,12 @@
 {
   "rewrites": [
-  { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://chalchitra.live/$1",
+      "permanent": true
+    }
   ]
 }
