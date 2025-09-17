@@ -12,19 +12,46 @@ function HeroSection() {
         <>
             {/* Hidden SEO Content */}
             <div style={{ display: "none" }}>
-                <h1>Watch Free Movies & Series Online – ChalChitra</h1>
+                <h1>Watch Free Movies & TV Series Online – ChalChitra</h1>
+                <h2>Stream Latest Movies, Web Series, and Shows for Free</h2>
                 <p>
-                    ChalChitra lets you watch the latest movies, web series, TV shows, and online content for free.
-                    Stream action, drama, comedy, thriller, and more without any subscription. Enjoy popular movies
-                    and hit series anytime, anywhere.
+                    ChalChitra is your ultimate destination to watch free movies online, trending web series,
+                    and popular TV shows. Enjoy action, drama, comedy, thriller, and more without any subscription.
+                    Watch top-rated movies and hit series anytime, anywhere.
                 </p>
                 <p>
-                    Explore free streaming movies, trending web series, and top TV shows online at ChalChitra.
+                    Explore free streaming movies, binge-watch web series, and discover online content
+                    just like popular OTT platforms, completely free on ChalChitra.
+                </p>
+                <p>
+                    Search and stream the latest films, series, and online shows in HD quality with no registration required.
                 </p>
             </div>
 
-            {/* Structured Data for Google (Invisible) */}
+            {/* Structured Data & Meta Tags for SEO */}
             <Helmet>
+                <title>ChalChitra – Watch Free Movies & TV Series Online</title>
+                <meta
+                    name="description"
+                    content="ChalChitra is the best free streaming site to watch movies, web series, and TV shows online without subscription. Stream trending content anytime for free."
+                />
+                <meta
+                    name="keywords"
+                    content="free movies online, watch TV series free, trending web series, stream movies online, watch shows free"
+                />
+                <meta name="robots" content="index, follow" />
+
+                {/* Open Graph / Social Preview */}
+                <meta property="og:title" content="ChalChitra – Free Movies & Series Online" />
+                <meta
+                    property="og:description"
+                    content="Stream the latest movies and web series online for free on ChalChitra."
+                />
+                <meta property="og:image" content="/logotopnew.png" />
+                <meta property="og:url" content="https://chalchitra.live" />
+                <meta property="og:type" content="website" />
+
+                {/* JSON-LD Structured Data */}
                 <script type="application/ld+json">
                     {JSON.stringify({
                         "@context": "https://schema.org",
@@ -43,12 +70,12 @@ function HeroSection() {
             {/* Existing landing page content */}
             <div className="relative w-full h-screen">
                 {/* Hero image as background */}
-                <img 
-                    src={heroImage} 
-                    alt="Hero" 
-                    className="absolute inset-0 w-full h-full object-cover -z-10" 
+                <img
+                    src={heroImage}
+                    alt="Hero"
+                    className="absolute inset-0 w-full h-full object-cover -z-10"
                 />
-                
+
                 <ImageText />
 
                 {/* Navbar above image */}
