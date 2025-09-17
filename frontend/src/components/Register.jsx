@@ -9,6 +9,9 @@ const Register = (props) => {
 
   const navigate = useNavigate();
 
+  // Use environment variable for backend URL
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:4000";
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -21,7 +24,7 @@ const Register = (props) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/users/register", {
+      const res = await fetch(`${backendUrl}/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -42,7 +45,7 @@ const Register = (props) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/users/signin", {
+      const res = await fetch(`${backendUrl}/users/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(signInForm),
@@ -61,7 +64,6 @@ const Register = (props) => {
 
   return (
     <div className="bg-white/10 backdrop-blur-xl border border-blue-400/40 text-white p-8 rounded-3xl shadow-2xl w-96 relative">
-      {/* Close button */}
       <button
         onClick={props.onClose}
         className="absolute top-4 right-4 text-yellow-400 hover:text-white text-2xl font-bold"
@@ -74,7 +76,6 @@ const Register = (props) => {
         {isSignIn ? "Sign In" : "Create Account"}
       </h2>
 
-      {/* Register Form */}
       {!isSignIn && (
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -116,7 +117,6 @@ const Register = (props) => {
         </form>
       )}
 
-      {/* Sign In Form */}
       {isSignIn && (
         <form onSubmit={handleSignInSubmit} className="space-y-4">
           <input
@@ -149,7 +149,6 @@ const Register = (props) => {
         </form>
       )}
 
-      {/* Toggle between Register / Sign In */}
       <div className="mt-4 text-center">
         {isSignIn ? (
           <>
