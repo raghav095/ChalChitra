@@ -13,6 +13,8 @@ import Footer from '../components/Footer';
 function HeroSection() {
     return (
         <>
+
+       
             <div className="relative w-full h-screen">
                 {/* Hero image as background */}
                 <img src={heroImage} alt="Hero" className="absolute inset-0 w-full h-full object-cover -z-10" />

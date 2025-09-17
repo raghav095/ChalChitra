@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Register from './Register';
-import newlogo from '../assets/Chalchitralogo.png'
+import Chalchitra from '../assets/Chalchitralogo.png'
 import { Link, useLocation } from 'react-router-dom';
 
 
@@ -22,11 +22,20 @@ const Navbar = () => {
   }
   return (
     <>
+
+    {/* Logo is only inside the navbar below */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-transparent px-6 py-4 flex justify-between items-center">
         {/* Logo */}
-        <div className="text-2xl font-extrabold tracking-wide text-yellow-500 drop-shadow-lg">
-         <img src={newlogo} alt="logo" className='h-25 w-auto' />
-        </div>
+        <div className="drop-shadow-lg">
+  <Link to="/">
+    <img
+      src={Chalchitra}
+      alt="ChalChitra Logo"
+      className="h-[100px] w-[220px] object-contain block"
+    />
+  </Link>
+</div>
+
         {/* Register Button */}
         {!hideRegister && (
           <button
