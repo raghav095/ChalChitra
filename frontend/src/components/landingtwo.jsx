@@ -29,7 +29,7 @@ const Info = () => {
     <section className="bg-gradient-to-r from-gray-900 via-gray-800 to-black py-16 px-6
 ">
       <h2 className="text-3xl md:text-4xl font-extrabold text-white text-center mb-12 drop-shadow-md">
-        Why Choose <span className="text-yellow-300">MoviesMania?</span>
+        Why Choose <span className="text-yellow-300">ChalChitra?</span>
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">

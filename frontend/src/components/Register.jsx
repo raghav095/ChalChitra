@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { login } from '../features/userSlice';
 
 const Register = (props) => {
   const [isSignIn, setIsSignIn] = useState(false);
@@ -8,6 +10,7 @@ const Register = (props) => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Use environment variable for backend URL
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
@@ -30,6 +33,8 @@ const Register = (props) => {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        const data = await res.json();
+        dispatch(login(data.data)); // Store user info in Redux
         navigate("/Mainpage");
       } else {
         alert("Registration failed");
@@ -51,6 +56,8 @@ const Register = (props) => {
         body: JSON.stringify(signInForm),
       });
       if (res.ok) {
+        const data = await res.json();
+        dispatch(login(data.data.user)); // Store user info in Redux
         navigate("/Mainpage");
       } else {
         alert("Login failed");
