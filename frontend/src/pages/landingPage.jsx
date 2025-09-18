@@ -6,6 +6,7 @@ import Info from '../components/landingtwo';
 import ImageText from '../components/imagetext';
 import Line from '../components/line';
 import Footer from '../components/Footer';
+import { motion } from 'framer-motion';
 
 function HeroSection() {
     return (
@@ -68,16 +69,19 @@ function HeroSection() {
             </Helmet>
 
             {/* Existing landing page content */}
+
             <div className="relative w-full h-screen">
-                {/* Hero image as background */}
-                <img
+                {/* Hero image as background with fade-in animation */}
+                <motion.img
                     src={heroImage}
                     alt="Hero"
                     className="absolute inset-0 w-full h-full object-cover -z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1.2 }}
                 />
-
+                {/* Only show ImageText above the image */}
                 <ImageText />
-
                 {/* Navbar above image */}
                 <Navbar />
             </div>
