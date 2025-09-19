@@ -34,7 +34,9 @@ const Register = (props) => {
       });
       if (res.ok) {
         const data = await res.json();
-        dispatch(login(data.data)); // Store user info in Redux
+        localStorage.setItem('user', JSON.stringify(data.data)); // or data.data, depending on your response
+        localStorage.setItem('isAuthenticated', 'true');
+        dispatch(login(data.data));
         navigate("/Mainpage");
       } else {
         alert("Registration failed");
@@ -57,6 +59,8 @@ const Register = (props) => {
       });
       if (res.ok) {
         const data = await res.json();
+        localStorage.setItem('user', JSON.stringify(data.data.user)); // or data.data, depending on your response
+        localStorage.setItem('isAuthenticated', 'true');
         dispatch(login(data.data.user)); // Store user info in Redux
         navigate("/Mainpage");
       } else {
