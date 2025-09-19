@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "./features/userSlice.js"; 
-
+import Explorepage from './pages/Explorepage.jsx'
 import './App.css';
 
 function App() {
@@ -28,6 +28,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HeroSection />} />
         <Route path="/Mainpage" element={<Mainpage />} />
+        <Route path="/Explore" element={<Explorepage />} />
       </Routes>
     </BrowserRouter>
   );

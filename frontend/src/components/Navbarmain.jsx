@@ -15,47 +15,104 @@ const Navbarmain = () => {
   const handleLogout = () => {
     dispatch(logout());
     setShowProfile(false);
-    navigate('/', { replace: true }); // ✅ redirect to landing page
+    navigate('/', { replace: true });
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-transparent px-6 py-4 flex justify-between items-center">
-      {/* Logo */}
-      <div className="drop-shadow-lg">
-        <Link to="/">
-          <img
-            src={Chalchitra}
-            alt="ChalChitra Logo"
-            className="h-[100px] w-[220px] object-contain block"
-          />
-        </Link>
-      </div>
+  <nav className="fixed top-0 left-0 w-full z-50 bg-transparent px-6 py-4 flex justify-between items-center">
+    
+    {/* === Left Side: Logo === */}
+    <div className="drop-shadow-lg">
+      <Link to="/">
+        <img
+          src={Chalchitra}
+          alt="ChalChitra Logo"
+          className="h-[100px] w-[220px] object-contain block"
+        />
+      </Link>
+    </div>
 
-      {/* Show only when authenticated */}
-      {isAuthenticated && (
-        <div className="relative inline-block">
-          <button
-            onClick={() => setShowProfile(!showProfile)}
-            className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full font-semibold shadow hover:bg-yellow-500"
-          >
-            Profile
-          </button>
-          {showProfile && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 p-4 text-gray-900">
-              <p className="font-bold mb-2">{user?.name || user?.username}</p>
-              <p className="text-sm mb-2">{user?.email}</p>
-              <button
-                onClick={handleLogout}
-                className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 mt-2"
-              >
-                Logout
-              </button>
-            </div>
-          )}
+   
+    <div className="flex items-center gap-x-8">
+    <Link 
+  to="/Mainpage" 
+  className="
+    px-6 py-2 
+    bg-gradient-to-b from-yellow-400 to-orange-500 
+    border border-orange-600
+    text-zinc-800 font-semibold tracking-wide rounded-lg 
+    shadow-md
+    transition-all duration-300 ease-in-out
+    hover:brightness-110 hover:shadow-lg hover:scale-105
+  "
+>
+  Home
+</Link>
+   <Link 
+  to="/explore" 
+  className="
+    px-6 py-2 
+    bg-gradient-to-b from-yellow-400 to-orange-500 
+    border border-orange-600
+    text-zinc-800 font-semibold tracking-wide rounded-lg 
+    shadow-md
+    transition-all duration-300 ease-in-out
+    hover:brightness-110 hover:shadow-lg hover:scale-105
+  "
+>
+  Explore
+</Link>
+    </div>
+
+
+
+    {isAuthenticated && (
+  <div className="relative inline-block">
+    
+    
+    <button
+      onClick={() => setShowProfile(!showProfile)}
+      className="h-12 w-12 flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full text-zinc-800 text-xl font-bold uppercase shadow-md transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-yellow-400"
+      aria-haspopup="true"
+      aria-expanded={showProfile}
+    >
+      {user?.name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+    </button>
+
+  
+    {showProfile && (
+      <div 
+        className="
+          absolute right-0 mt-2 w-56 
+          bg-slate-900 bg-opacity-90 backdrop-blur-sm 
+          border border-gray-700 
+          rounded-lg shadow-xl 
+          origin-top-right transition-all duration-300 ease-in-out
+        "
+        
+        style={{ transform: 'scale(1)', opacity: 1 }} 
+      >
+        <div className="px-4 py-3 border-b border-gray-700">
+          <p className="font-bold text-white truncate">{user?.name || user?.username}</p>
+          <p className="text-sm text-gray-400 truncate">{user?.email}</p>
         </div>
-      )}
-    </nav>
-  );
+        <div className="p-2">
+          <button
+            onClick={handleLogout}
+            className="w-full text-left px-3 py-2 text-sm font-medium text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-colors duration-200"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
+
+
+  </nav>
+);
 };
 
 export default Navbarmain;

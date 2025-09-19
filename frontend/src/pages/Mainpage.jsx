@@ -5,7 +5,7 @@ const Mainpage = () => {
   return (
     <>
       <Navbarmain />
-      <div className="box w-full h-screen bg-black/90 backdrop-blur-md border border-white/30">
+      <div className="box w-full h-screen bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)]">
         <div></div>
       </div>
     </>
