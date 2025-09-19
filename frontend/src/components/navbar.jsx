@@ -36,14 +36,28 @@ const Navbar = () => {
   </Link>
 </div>
 
-        {/* Register Button */}
+        
         {!hideRegister && (
-          <button
-            onClick={modelpop}
-            className="bg-gray-900 text-white px-5 py-2 rounded-xl shadow-md hover:bg-yellow-400 hover:text-gray-900 transition font-semibold"
-          >
-            Register
-          </button>
+          <>
+            <button
+              onClick={modelpop}
+              className="login-gradient-btn px-5 py-2 rounded-xl shadow-md font-semibold cursor-pointer text-white transition"
+            >
+              Login
+            </button>
+            <style>{`
+              .login-gradient-btn {
+                background: linear-gradient(90deg, #1a2233 0%, #283a5b 100%);
+                border: 1.5px solid #e7d9b2;
+                letter-spacing: 0.06em;
+              }
+              .login-gradient-btn:hover {
+                background: linear-gradient(90deg, #f8f6f2 0%, #e7d9b2 100%);
+                color: #232323;
+                border-color: #e7d9b2;
+              }
+            `}</style>                                     
+          </>
         )}
       </nav>
       {/* Modal: Only show when model is true */}
