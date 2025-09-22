@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; 
-import axios from 'axios';
-import { PlayCircle, Film } from 'lucide-react'; // Added Film icon
-import VideoPlayer from '../components/VideoPlayer.jsx'; // Make sure this path is correct
+import api from '../api/axios'; // 1. Import your new reusable api client
+import { PlayCircle, Film } from 'lucide-react'; 
+import VideoPlayer from '../components/VideoPlayer'; // Make sure this path is correct
 
 const MovieDetails = () => {
   const { id } = useParams(); 
   const [movie, setMovie] = useState(null); 
-  const [playerUrl, setPlayerUrl] = useState(null); // This will control the video player
+  const [playerUrl, setPlayerUrl] = useState(null); 
 
   useEffect(() => {
     async function fetchMovieDetails() {
       try {
-        const response = await axios.get(`/api/movies/${id}`);
+        // 2. Use 'api.get' instead of 'axios.get' with the relative path
+        const response = await api.get(`/api/movies/${id}`); 
         setMovie(response.data); 
       } catch (error) {
         console.error("Error fetching movie details:", error);
@@ -57,9 +58,7 @@ const MovieDetails = () => {
               </div>
               <p className="text-md md:text-lg text-gray-200 mb-6 leading-relaxed">{movie.overview}</p>
               
-              {/* --- ACTION BUTTONS --- */}
               <div className="flex items-center gap-x-4">
-                {/* Play Trailer Button */}
                 {movie.trailerKey && (
                   <button 
                     onClick={() => setPlayerUrl(`https://www.youtube.com/watch?v=${movie.trailerKey}`)}
@@ -69,7 +68,6 @@ const MovieDetails = () => {
                     <span>Play Trailer</span>
                   </button>
                 )}
-                {/* Play Movie Button */}
                 <button 
                   onClick={() => setPlayerUrl(movie.videoUrl)}
                   className="flex items-center gap-x-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg shadow-md hover:bg-white/20 transform hover:scale-105 transition-all duration-300"
@@ -83,7 +81,6 @@ const MovieDetails = () => {
         </div>
       </div>
 
-      {/* --- This will render the video player when playerUrl is set --- */}
       {playerUrl && <VideoPlayer videoUrl={playerUrl} onClose={() => setPlayerUrl(null)} />}
     </>
   );
