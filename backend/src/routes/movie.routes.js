@@ -1,11 +1,12 @@
 import express from 'express';
-import axios from 'axios'; 
-const router = express.Router(); //
+import { Movie } from "../models/movie.model.js"; // Import your Mongoose model
+
+const router = express.Router();
+
 router.get('/', async (req, res) => {
   try {
-    
-    const moviesCollection = req.app.locals.db.collection('movies');
-    const allMovies = await moviesCollection.find({}).toArray();
+    // Use the Mongoose model to find all movies
+    const allMovies = await Movie.find({}); 
     res.json(allMovies);
   } catch (error) {
     console.error("Error fetching movies from DB:", error);
