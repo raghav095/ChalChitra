@@ -1,12 +1,8 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser"; // 1. IMPORT cookie-parser
 import connectdb from "./database/db.js";
-
-// Import your routes
 import movieRoutes from "./routes/movie.routes.js";
-import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -27,22 +23,21 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cookieParser()); // 2. USE cookie-parser BEFORE your routes
 
 // --- Routes ---
 app.use("/api/movies", movieRoutes);
-app.use("/users", userRoutes); 
+// ALL USER AND AUTH ROUTES HAVE BEEN REMOVED FOR THIS TEST
 
-// A simple route to confirm the server is running
+// This message is our proof that the new code is live
 app.get("/", (req, res) => {
-  res.send("ChalChitra Backend - LATEST VERSION - IS LIVE!");
+  res.send("Backend VERSION 3 - AUTH DISABLED");
 });
 
 // --- Connect to Database and Start Server ---
 connectdb()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   })
   .catch((err) => {
