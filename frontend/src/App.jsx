@@ -7,6 +7,7 @@ import Explorepage from './pages/Explorepage.jsx';
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "./features/userSlice.js";
+import MovieDetails from "./components/MoviesDetails.jsx"
 import './App.css';
 
 function AppContent() {
@@ -28,6 +29,7 @@ function AppContent() {
         <Route path="/" element={<HeroSection />} />
         <Route path="/Mainpage" element={<Mainpage />} />
         <Route path="/Explore" element={<Explorepage />} />
+        <Route path="/movie/:id" element={<MovieDetails />} />
       </Routes>
     </>
   );
