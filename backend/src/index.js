@@ -1,33 +1,38 @@
 import dotenv from "dotenv";
-dotenv.config();
-console.log("GOOGLE_CLIENT_ID from index.js:", process.env.GOOGLE_CLIENT_ID);
-import app from "./app.js";
+import express from "express";
+import cors from "cors";
 import connectdb from "./database/db.js";
 
-// Load environment variables
+// Import your routes
+import movieRoutes from "./routes/movie.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
-const PORT = process.env.PORT || 5000;
+dotenv.config();
 
-connectdb().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
+const app = express();
+const PORT = process.env.PORT || 8080;
+
+// --- Middleware ---
+app.use(cors());
+app.use(express.json());
+
+// --- Routes ---
+app.use("/api/movies", movieRoutes);
+app.use("/users", userRoutes); 
+
+// A simple route to confirm the server is running
+app.get("/", (req, res) => {
+  res.send("ChalChitra backend is running!");
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// --- Connect to Database and Start Server ---
+connectdb()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("MONGO db connection failed !!! ", err);
+    process.exit(1);
+  });
