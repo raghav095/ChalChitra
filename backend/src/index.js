@@ -13,12 +13,19 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // --- Middleware ---
+// Define a list of all the frontend URLs you want to allow
+const allowedOrigins = [
+  process.env.FRONTEND_URL,   // Your live site (e.g., https://chalchitra.live)
+  'http://localhost:5173',    // Your local Vite dev server
+  'http://localhost:5174'     // Also include the other port you were using
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: allowedOrigins,
   credentials: true,
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); // Use the new, more flexible options
 app.use(express.json());
 
 // --- Routes ---
