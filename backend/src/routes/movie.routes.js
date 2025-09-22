@@ -1,16 +1,13 @@
-import express from "express";
-import Movie from "../models/movie.model.js";
-const router = express.Router();
-
-// Movie API routes
-router.get("/add", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const movie = new Movie({ title: "Sample Movie", year: 2025 });
-    await movie.save();
-    res.json({ success: true, movie });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    
+    const moviesCollection = req.app.locals.db.collection('movies');
+    const allMovies = await moviesCollection.find({}).toArray();
+    res.json(allMovies);
+  } catch (error) {
+    console.error("Error fetching movies from DB:", error);
+    res.status(500).json({ message: "Error fetching movies" });
   }
 });
 
-export default router;
+module.exports = router;

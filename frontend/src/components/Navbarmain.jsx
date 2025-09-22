@@ -54,7 +54,7 @@ const Navbarmain = () => {
         <div className="relative inline-block">
           <button
             onClick={() => setShowProfile(!showProfile)}
-            className="h-12 w-12 flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full text-zinc-800 text-xl font-bold uppercase shadow-md transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-yellow-400"
+            className="h-12 w-12 flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full text-zinc-800 text-xl font-bold uppercase shadow-md transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-yellow-400 cursor-pointer"
             aria-haspopup="true"
             aria-expanded={showProfile}
           >
