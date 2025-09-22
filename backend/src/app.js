@@ -18,7 +18,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/movies", movieRoutes);
+app.use("/api/movies", movieRoutes);
 app.use("/users", userRoutes);
 
 app.get(
