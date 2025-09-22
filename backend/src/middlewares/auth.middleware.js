@@ -1,29 +1,40 @@
-// Auth middleware
 import { Apierror } from "../utils/Apierrors.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import  Jwt from "jsonwebtoken";
+import Jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 
- const verify = asyncHandler(async(req,res,next)=>{
-
+const verify = asyncHandler(async(req, res, next) => {
+  // --- ADD THESE LOGS FOR DEBUGGING ---
+  console.log("--- VERIFY MIDDLEWARE TRIGGERED ---");
+  console.log("Original URL:", req.originalUrl);
+  // --- END OF LOGS ---
+  
   try {
-    const token =  req.cookies?.accesstoken || req.header("authorization")?.replace("Bearer" , "")
-  
-    if(!token){
-      throw new Apierror(401 ,"unauthorized request")
-    }
-  
-     const decoded = Jwt.verify(token , process.env.ACCESS_TOKENS_SECRET)
-  
-     const user= await User.findById(decoded?._id).select("-password -refreshtokens")
-     if(!user){
-      throw new Apierror(401 , "invalid access token")
-     }
-     req.user = user;
-     next()
-  } catch (error) {
-    throw new Apierror(401 , "invalid haaii")
-  }
-}) 
+    const token = req.cookies?.accesstoken || req.header("authorization")?.replace("Bearer ", "");
+    
+    // More debugging logs
+    console.log("Token found:", token ? "Yes" : "No");
 
-export {verify}
+    if (!token) {
+      console.log("No token found, throwing 401 error.");
+      throw new Apierror(401, "Unauthorized request");
+    }
+
+    const decoded = Jwt.verify(token, process.env.ACCESS_TOKENS_SECRET);
+    const user = await User.findById(decoded?._id).select("-password -refreshtokens");
+    
+    if (!user) {
+      console.log("Token was invalid or user not found, throwing 401 error.");
+      throw new Apierror(401, "Invalid access token");
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    // We throw our own specific error, but also log the original error
+    console.error("Error inside verify middleware:", error.message);
+    throw new Apierror(401, error.message || "Invalid Token");
+  }
+}); 
+
+export { verify };
