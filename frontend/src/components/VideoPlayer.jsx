@@ -9,25 +9,30 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
   const [isReady, setIsReady] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUrlIndex, setCurrentUrlIndex] = useState(0);
   const playerRef = useRef(null);
 
-  // 2. Determine video type and validate URL
+  // 2. Determine video type and generate fallback URLs
   const isYouTubeUrl = videoUrl?.includes('youtube.com') || videoUrl?.includes('youtu.be');
   const isArchiveUrl = videoUrl?.includes('archive.org');
   const isValidUrl = videoUrl && (videoUrl.startsWith('http') || videoUrl.startsWith('blob:'));
 
-  // Convert Archive.org embed URL to direct video URL
-  const getProcessedUrl = (url) => {
-    if (isArchiveUrl && url.includes('/embed/')) {
-      // Extract identifier from embed URL
-      const identifier = url.split('/embed/')[1];
-      // Return the direct video URL for better compatibility
-      return `https://archive.org/download/${identifier}/${identifier}.mp4`;
-    }
-    return url;
+  // Generate multiple URL options for Archive.org videos
+  const getArchiveUrls = (url) => {
+    if (!isArchiveUrl || !url.includes('/embed/')) return [url];
+    
+    const identifier = url.split('/embed/')[1];
+    return [
+      url, // Original embed URL
+      `https://archive.org/details/${identifier}`, // Details page
+      `https://ia902707.us.archive.org/17/items/${identifier}/${identifier}.mp4`, // Direct MP4 (common server)
+      `https://archive.org/download/${identifier}/${identifier}.mp4`, // Download URL
+      `https://archive.org/serve/${identifier}/${identifier}.mp4` // Serve URL
+    ];
   };
 
-  const processedVideoUrl = getProcessedUrl(videoUrl);
+  const urlOptions = isArchiveUrl ? getArchiveUrls(videoUrl) : [videoUrl];
+  const currentUrl = urlOptions[currentUrlIndex];
 
   useEffect(() => {
     if (!isValidUrl) {
@@ -36,14 +41,27 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
     } else {
       setError(false);
       setIsLoading(true);
+      setCurrentUrlIndex(0); // Reset to first URL when videoUrl changes
     }
   }, [videoUrl, isValidUrl]);
 
-  // 3. Create a function to handle player errors
+  
+
+  // 3. Enhanced error handler with fallback URLs
   const handleError = (e) => {
-    console.error("ReactPlayer error:", e);
-    setError(true);
-    setIsLoading(false);
+    console.error("Video player error:", e);
+    
+    // Try next URL if available
+    if (currentUrlIndex < urlOptions.length - 1) {
+      console.log(`Trying fallback URL ${currentUrlIndex + 1}...`);
+      setCurrentUrlIndex(currentUrlIndex + 1);
+      setIsLoading(true);
+      setError(false);
+    } else {
+      console.error("All URL options failed");
+      setError(true);
+      setIsLoading(false);
+    }
   };
 
   // 4. Handle cleanup when component unmounts
@@ -115,9 +133,16 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
           <div className="w-full h-full flex items-center justify-center text-white text-xl bg-black">
             <div className="text-center">
               <p>Sorry, this video is currently unavailable.</p>
-              <p className="text-sm mt-2 text-gray-400">Please check the video source.</p>
-              {!isValidUrl && (
-                <p className="text-sm mt-2 text-red-400">Invalid video URL format</p>
+              <p className="text-sm mt-2 text-gray-400">All video sources failed to load.</p>
+              {isArchiveUrl && (
+                <div className="mt-4">
+                  <button 
+                    onClick={() => window.open(videoUrl.replace('/embed/', '/details/'), '_blank')}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                  >
+                    View on Archive.org
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -129,6 +154,9 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
                   <p>Loading video...</p>
+                  {currentUrlIndex > 0 && (
+                    <p className="text-sm text-gray-400 mt-2">Trying alternative source ({currentUrlIndex + 1}/{urlOptions.length})</p>
+                  )}
                 </div>
               </div>
             )}
@@ -148,31 +176,34 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
               </div>
             )}
             
-            {/* ReactPlayer with Archive.org support */}
-            {isArchiveUrl ? (
-              // Use iframe for Archive.org embed URLs as fallback
+            {/* Conditional rendering based on video type and current URL */}
+            {isArchiveUrl && currentUrlIndex === 0 ? (
+              // Use iframe for original Archive.org embed URL
               <iframe
-                src={videoUrl}
+                src={currentUrl}
                 width="100%"
                 height="100%"
                 frameBorder="0"
                 allowFullScreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 title="Movie Player"
+                loading="lazy"
                 onLoad={() => {
                   setIsReady(true);
                   setIsLoading(false);
                 }}
-                onError={() => {
-                  setError(true);
-                  setIsLoading(false);
+                onError={() => handleError({ type: 'iframe', message: 'Iframe failed to load' })}
+                style={{ 
+                  border: 'none',
+                  backgroundColor: '#000'
                 }}
-                style={{ border: 'none' }}
               />
             ) : (
-              // Use ReactPlayer for other video types
+              // Use ReactPlayer for all other URLs (including Archive.org fallbacks)
               <ReactPlayer
+                key={currentUrl} // Force re-render when URL changes
                 ref={playerRef}
-                url={processedVideoUrl}
+                url={currentUrl}
                 controls={true}
                 playing={isPlaying}
                 width="100%"
