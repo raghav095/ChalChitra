@@ -1,8 +1,14 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import passport from "./auth/googleauth.js";
 import connectdb from "./database/db.js";
+
+// Import your routes
 import movieRoutes from "./routes/movie.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -23,21 +29,46 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
+app.use(
+  session({
+    secret: "your-session-secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // --- Routes ---
+// These are public and do not require login
 app.use("/api/movies", movieRoutes);
-// ALL USER AND AUTH ROUTES HAVE BEEN REMOVED FOR THIS TEST
 
-// This message is our proof that the new code is live
+// These routes may contain a mix of public (register) and private (logout) routes
+app.use("/users", userRoutes); 
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    res.redirect(`${process.env.FRONTEND_URL}/mainpage`);
+  }
+);
+
 app.get("/", (req, res) => {
-  res.send("Backend VERSION 3 - AUTH DISABLED");
+  res.send("ChalChitra backend is running!");
 });
 
 // --- Connect to Database and Start Server ---
 connectdb()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🚀 Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {
