@@ -5,7 +5,7 @@ import connectdb from "./database/db.js";
 
 // Import your routes
 import movieRoutes from "./routes/movie.routes.js";
-import userRoutes from "./routes/user.routes.js";
+// import userRoutes from "./routes/user.routes.js"; // <-- 1. COMMENT OUT THIS LINE
 
 dotenv.config();
 
@@ -13,24 +13,21 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // --- Middleware ---
-// Define a list of all the frontend URLs you want to allow
 const allowedOrigins = [
-  process.env.FRONTEND_URL,   // Your live site (e.g., https://chalchitra.live)
-  'http://localhost:5173',    // Your local Vite dev server
-  'http://localhost:5174'     // Also include the other port you were using
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:5174'
 ];
-
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,
 };
-
-app.use(cors(corsOptions)); // Use the new, more flexible options
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // --- Routes ---
 app.use("/api/movies", movieRoutes);
-app.use("/users", userRoutes); 
+// app.use("/users", userRoutes); // <-- 2. COMMENT OUT THIS LINE
 
 // A simple route to confirm the server is running
 app.get("/", (req, res) => {
