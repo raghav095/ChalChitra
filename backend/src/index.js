@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser"; // 1. IMPORT cookie-parser
 import connectdb from "./database/db.js";
 
 // Import your routes
 import movieRoutes from "./routes/movie.routes.js";
-// import userRoutes from "./routes/user.routes.js"; // <-- 1. COMMENT OUT THIS LINE
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -18,20 +19,23 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174'
 ];
+
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser()); // 2. USE cookie-parser BEFORE your routes
 
 // --- Routes ---
 app.use("/api/movies", movieRoutes);
-// app.use("/users", userRoutes); // <-- 2. COMMENT OUT THIS LINE
+app.use("/users", userRoutes); 
 
 // A simple route to confirm the server is running
 app.get("/", (req, res) => {
-  res.send("ChalChitra backend is running!");
+  res.send("ChalChitra Backend - LATEST VERSION - IS LIVE!");
 });
 
 // --- Connect to Database and Start Server ---
