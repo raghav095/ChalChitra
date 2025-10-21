@@ -10,20 +10,17 @@ router.route("/register").post(userregistration)
 router.route("/signin").post(usersignin)
 
 
-router.get("/me" , verify,async(req,res)=>{
-    console.log("req.user:", req.user);
-    try {
-        
-     if (!req.user) {
-      throw new Apierror(401 , "Not Authenticated")
-    }
-    res.json({ user: req.user });
-        
-    } catch (error) {
-       throw new Apierror(500 , "server error ")
-    }
-})
+router.get("/me", verify, async (req, res) => {
+  console.log("req.user:", req.user);
+  if (!req.user) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+  res.json({ user: req.user });
+});
+
+
 router.route("/logout").post(verify,logoutuser)
 router.route("/refrshed-token").post(refreshaccesstoekn)
 
 export default router ;
+

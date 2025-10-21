@@ -23,10 +23,15 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 };
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
@@ -40,11 +45,9 @@ app.use(session({
     sameSite: "none",
   }
 }));
-
-
-
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 // --- Routes ---
 // These are public and do not require login

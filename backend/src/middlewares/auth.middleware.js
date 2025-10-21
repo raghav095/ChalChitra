@@ -15,6 +15,7 @@ const verify = asyncHandler(async(req, res, next) => {
     if (!token) {
       console.log("No token found, throwing 401 error.");
       throw new Apierror(401, "Unauthorized request");
+      
     }
 
     const decoded = Jwt.verify(token, process.env.ACCESS_TOKENS_SECRET);
