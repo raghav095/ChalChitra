@@ -11,7 +11,9 @@ router.route("/signin").post(usersignin)
 
 
 router.get("/me" , verify,async(req,res)=>{
+    console.log("req.user:", req.user);
     try {
+        
      if (!req.user) {
       throw new Apierror(401 , "Not Authenticated")
     }

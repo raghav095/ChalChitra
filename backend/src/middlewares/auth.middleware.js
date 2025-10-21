@@ -4,16 +4,13 @@ import Jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 
 const verify = asyncHandler(async(req, res, next) => {
-  // --- ADD THESE LOGS FOR DEBUGGING ---
-  console.log("--- VERIFY MIDDLEWARE TRIGGERED ---");
-  console.log("Original URL:", req.originalUrl);
-  // --- END OF LOGS ---
+  if (req.user) return next(); 
+
   
   try {
     const token = req.cookies?.accesstoken || req.header("authorization")?.replace("Bearer ", "");
     
-    // More debugging logs
-    console.log("Token found:", token ? "Yes" : "No");
+
 
     if (!token) {
       console.log("No token found, throwing 401 error.");
@@ -31,7 +28,7 @@ const verify = asyncHandler(async(req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    // We throw our own specific error, but also log the original error
+    
     console.error("Error inside verify middleware:", error.message);
     throw new Apierror(401, error.message || "Invalid Token");
   }
