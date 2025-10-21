@@ -12,7 +12,7 @@ const Navbarmain = () => {
   const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
 
-  const handleLogout = () => {
+  
     const handleLogout = () => {
   localStorage.removeItem('user');
   localStorage.removeItem('isAuthenticated');
@@ -21,7 +21,7 @@ const Navbarmain = () => {
   navigate('/', { replace: true });
 };
 
-  };
+  
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-transparent px-6 py-4 flex justify-between items-center">
