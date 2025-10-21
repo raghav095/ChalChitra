@@ -62,6 +62,15 @@ app.use("/api/movies", movieRoutes);
 
 // These routes may contain a mix of public (register) and private (logout) routes
 app.use("/users", userRoutes); 
+app.use((err, req, res, next) => {
+  res.status(err.statuscode || 500).json({
+    success: false,
+    message: err.message || "Server error",
+    errors: err.errors || [],
+    stack: err.stack || "",
+    data: err.data || null
+  });
+});
 
 app.get(
   "/auth/google",
