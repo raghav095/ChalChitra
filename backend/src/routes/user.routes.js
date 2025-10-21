@@ -8,19 +8,7 @@ const router = Router();
 
 router.route("/register").post(userregistration)
 router.route("/signin").post(usersignin)
-router.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
 
-router.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    // Redirect to your frontend after successful login
-    res.redirect(`${process.env.FRONTEND_URL}/mainpage`);
-  }
-);
 
 router.get("/me" , verify,async(req,res)=>{
     try {
