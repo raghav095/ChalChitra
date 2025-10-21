@@ -11,7 +11,10 @@ router.route("/signin").post(usersignin)
 
 
 router.get("/me", verify, async (req, res) => {
+  console.log("/users/me debug:");
   console.log("req.user:", req.user);
+  console.log("req.session:", req.session);
+  console.log("req.cookies:", req.cookies);
   if (!req.user) {
     return res.status(401).json({ message: "Not authenticated" });
   }

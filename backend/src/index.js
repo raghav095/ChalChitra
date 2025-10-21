@@ -14,6 +14,7 @@ import userRoutes from "./routes/user.routes.js";
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1); // trust first proxy for secure cookies
 const PORT = process.env.PORT || 8080;
 
 // --- Middleware ---
