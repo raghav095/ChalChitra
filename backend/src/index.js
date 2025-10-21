@@ -1,3 +1,4 @@
+import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
@@ -40,11 +41,17 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URL,
+    dbName: process.env.DB_NAME,
+    collectionName: "sessions",
+  }),
   cookie: {
     secure: true,
     sameSite: "none",
   }
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
