@@ -13,9 +13,14 @@ const Navbarmain = () => {
   const [showProfile, setShowProfile] = useState(false);
 
   const handleLogout = () => {
-    dispatch(logout());
-    setShowProfile(false);
-    navigate('/', { replace: true });
+    const handleLogout = () => {
+  localStorage.removeItem('user');
+  localStorage.removeItem('isAuthenticated');
+  dispatch(logout());
+  setShowProfile(false);
+  navigate('/', { replace: true });
+};
+
   };
 
   return (
