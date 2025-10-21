@@ -176,6 +176,21 @@ const Register = (props) => {
         </form>
       )}
 
+      <div className="my-4 flex flex-col items-center">
+  <button
+    type="button"
+    onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/users/auth/google`}
+    className="flex items-center gap-2 px-4 py-2 bg-white text-gray-800 rounded shadow hover:bg-gray-100 font-semibold border border-gray-300"
+  >
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
+      alt="Google"
+      className="w-5 h-5"
+    />
+    Continue with Google
+  </button>
+</div>
+
       <div className="mt-4 text-center">
         {isSignIn ? (
           <>
