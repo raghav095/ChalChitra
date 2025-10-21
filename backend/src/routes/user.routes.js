@@ -17,7 +17,7 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     // Redirect to your frontend after successful login
-    res.redirect("https://chalchitra.live");
+    res.redirect(`${process.env.FRONTEND_URL}/mainpage`);
   }
 );
 
