@@ -179,7 +179,7 @@ const Register = (props) => {
       <div className="my-4 flex flex-col items-center">
   <button
     type="button"
-    onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/users/auth/google`}
+    onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`}
     className="flex items-center gap-2 px-4 py-2 bg-white text-gray-800 rounded shadow hover:bg-gray-100 font-semibold border border-gray-300"
   >
     <img
