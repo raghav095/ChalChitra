@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { login } from '../features/userSlice';
 
 const Register = (props) => {
-  const [isSignIn, setIsSignIn] = useState(false);
+  // allow parent to open modal in Sign In mode
+  const initialSignIn = !!props.initialIsSignIn;
+  const [isSignIn, setIsSignIn] = useState(initialSignIn);
+
+  useEffect(() => {
+    setIsSignIn(initialSignIn);
+  }, [initialSignIn]);
+
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [signInForm, setSignInForm] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -23,6 +30,8 @@ const Register = (props) => {
     setSignInForm({ ...signInForm, [e.target.name]: e.target.value });
   };
 
+  const inputBaseClass = "w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black bg-white placeholder-gray-500";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -34,15 +43,18 @@ const Register = (props) => {
       });
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem('user', JSON.stringify(data.data)); // or data.data, depending on your response
+        localStorage.setItem('user', JSON.stringify(data.data)); 
         localStorage.setItem('isAuthenticated', 'true');
         dispatch(login(data.data));
         navigate("/Mainpage");
+        if (props.onClose) props.onClose();
       } else {
-        alert("Registration failed");
+        const err = await res.json().catch(()=>({message:'Registration failed'}));
+        alert(err.message || "Registration failed");
       }
     } catch (err) {
       console.error(err);
+      alert("Registration error");
     } finally {
       setLoading(false);
     }
@@ -59,15 +71,19 @@ const Register = (props) => {
       });
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem('user', JSON.stringify(data.data.user)); // or data.data, depending on your response
+        const user = data?.data?.user || data?.data || data;
+        localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('isAuthenticated', 'true');
-        dispatch(login(data.data.user)); // Store user info in Redux
+        dispatch(login(user));
         navigate("/Mainpage");
+        if (props.onClose) props.onClose();
       } else {
-        alert("Login failed");
+        const err = await res.json().catch(()=>({message:'Login failed'}));
+        alert(err.message || "Login failed");
       }
     } catch (err) {
       console.error(err);
+      alert("Login error");
     } finally {
       setLoading(false);
     }
@@ -95,7 +111,7 @@ const Register = (props) => {
             placeholder="Username"
             value={form.username}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            className={inputBaseClass}
             required
           />
           <input
@@ -104,7 +120,7 @@ const Register = (props) => {
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            className={inputBaseClass}
             required
           />
           <input
@@ -113,7 +129,7 @@ const Register = (props) => {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            className={inputBaseClass}
             required
           />
           <button
@@ -136,7 +152,7 @@ const Register = (props) => {
             placeholder="Username or Email"
             value={signInForm.username}
             onChange={handleSignInChange}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            className={inputBaseClass}
             required
           />
           <input
@@ -145,7 +161,7 @@ const Register = (props) => {
             placeholder="Password"
             value={signInForm.password}
             onChange={handleSignInChange}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-black"
+            className={inputBaseClass}
             required
           />
           <button
