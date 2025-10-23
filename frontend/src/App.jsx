@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "./features/userSlice.js";
 import MovieDetails from "./components/MoviesDetails.jsx"
+import SearchResults from './pages/SearchResults.jsx';
 import './App.css';
 
 function AppContent() {
@@ -30,6 +31,7 @@ function AppContent() {
         <Route path="/Mainpage" element={<Mainpage />} />
         <Route path="/Explore" element={<Explorepage />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
+        <Route path="/search" element={<SearchResults />} />
       </Routes>
     </>
   );

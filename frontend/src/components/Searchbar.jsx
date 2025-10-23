@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react'; // Changed to import from lucide-react
+import { useNavigate } from 'react-router-dom';
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const q = String(query || '').trim();
+    if (q.length === 0) return;
+    navigate(`/search?q=${encodeURIComponent(q)}`);
+  }
 
   return (
-    <div className="relative w-full max-w-xs">
-      
+    <form onSubmit={handleSubmit} className="relative w-full max-w-xs">
       {/* The Search Icon from Lucide */}
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <Search className="h-5 w-5 text-gray-400" />
       </div>
 
-      {/* The Input Field (No changes here) */}
       <input 
         type="text" 
         value={query}
@@ -29,8 +36,7 @@ const SearchBar = () => {
           transition-all duration-300
         "
       />
-
-    </div>
+    </form>
   );
 };
 

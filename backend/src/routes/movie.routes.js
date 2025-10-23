@@ -11,6 +11,18 @@ router.get('/', asyncHandler(async (req, res) => {
   res.json(allMovies);
 }));
 
+// Search endpoint - query param: q
+router.get('/search', asyncHandler(async (req, res) => {
+  const q = String(req.query.q || '').trim();
+  if (!q) {
+    return res.json([]);
+  }
+
+  // simple case-insensitive substring match on title
+  const results = await Movie.find({ title: { $regex: q, $options: 'i' } }).limit(50);
+  res.json(results);
+}));
+
 router.get('/:id', asyncHandler(async (req, res) => {
   const { id } = req.params;
 
