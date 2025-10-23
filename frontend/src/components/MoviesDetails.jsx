@@ -90,8 +90,11 @@ const MovieDetails = () => {
       <div 
         className="min-h-screen bg-cover bg-center text-white flex items-center"
         style={{
-          backgroundImage: `linear-gradient(to right, rgba(26, 34, 51, 1) 0%, rgba(26, 34, 51, 0.8) 40%, rgba(26,34,51,0.6) 60%), url(${poster_url}${movie.posterPath})`,
-          backgroundRepeat: 'no-repeat'
+          // use the higher-resolution backdrop image so it covers the full viewport without pixelation
+          backgroundImage: `linear-gradient(to right, rgba(26, 34, 51, 1) 0%, rgba(26, 34, 51, 0.8) 40%, rgba(26,34,51,0.6) 60%), url(${base_url}${movie.backdropPath})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center'
         }}
       >
         <div className="w-full max-w-6xl mx-auto pt-24 pb-12 px-6 md:px-16">
@@ -152,8 +155,8 @@ const MovieDetails = () => {
               <div className="text-sm text-gray-300">Top billed</div>
             </div>
 
-            {movie.cast && movie.cast.length > 0 ? (
-              <div className="flex gap-6 overflow-x-auto py-2 -mx-2 px-2">
+              {movie.cast && movie.cast.length > 0 ? (
+              <div className="flex flex-wrap gap-6 py-2">
                 {movie.cast.map((member) => (
                   <article
                     key={member.id}
