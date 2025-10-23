@@ -93,22 +93,30 @@ const MovieDetails = () => {
           backgroundImage: `linear-gradient(to right, rgba(26, 34, 51, 1) 20%, rgba(26, 34, 51, 0.7) 50%, transparent 100%), url(${base_url}${movie.backdropPath})`
         }}
       >
-        <div className="min-h-screen flex items-center pt-24 pb-12 px-8 md:px-16">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            
-            <div className="flex-shrink-0">
-              <img src={`${poster_url}${movie.posterPath}`} alt={movie.title} className="w-64 md:w-72 rounded-lg shadow-2xl"/>
-            </div>
+        <div className="min-h-screen pt-24 pb-12 px-4 md:px-16">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 items-start">
+            {/* Poster column - non-sticky on all sizes so it scrolls with the page */}
+            <aside className="hidden md:block">
+              <div>
+                <img src={`${poster_url}${movie.posterPath}`} alt={movie.title} className="w-64 md:w-72 rounded-lg shadow-2xl" />
+              </div>
+            </aside>
 
-            <div className="flex flex-col max-w-2xl">
+            {/* Main details column */}
+            <main className="flex flex-col">
+              {/* Mobile poster (visible on small screens) */}
+              <div className="md:hidden mb-6">
+                <img src={`${poster_url}${movie.posterPath}`} alt={movie.title} className="w-full rounded-lg shadow-2xl" />
+              </div>
+
               <h1 className="text-4xl md:text-6xl font-black mb-2">{movie.title}</h1>
               <div className="flex items-center gap-x-4 text-gray-300 mb-4">
                 <span>{movie.releaseDate?.substring(0, 4)}</span>
                 <span className="border-l border-gray-500 pl-4">⭐ {movie.voteAverage?.toFixed(1)} / 10</span>
               </div>
               <p className="text-md md:text-lg text-gray-200 mb-6 leading-relaxed">{movie.overview}</p>
-              
-              <div className="flex items-center gap-x-4">
+
+              <div className="flex items-center gap-x-4 mb-6">
                 {movie.trailerKey && (
                   <button 
                     onClick={() => setPlayerUrl(`https://www.youtube.com/watch?v=${movie.trailerKey}`)}
@@ -126,7 +134,27 @@ const MovieDetails = () => {
                   <span>Play Movie</span>
                 </button>
               </div>
-            </div>
+
+              {/* Crew info: directors and writers */}
+              <div className="mb-6">
+                <div className="flex flex-wrap gap-6">
+                  {movie.crew?.directors && movie.crew.directors.length > 0 && (
+                    <div>
+                      <div className="text-sm text-gray-400">Director</div>
+                      <div className="text-white font-medium">{movie.crew.directors.map(d => d.name).join(', ')}</div>
+                    </div>
+                  )}
+
+                  {movie.crew?.writers && movie.crew.writers.length > 0 && (
+                    <div>
+                      <div className="text-sm text-gray-400">Writer</div>
+                      <div className="text-white font-medium">{movie.crew.writers.map(w => w.name).join(', ')}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </main>
           </div>
         </div>
         {/* Cast section - full-width panel below the poster/details */}
