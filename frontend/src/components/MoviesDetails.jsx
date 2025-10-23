@@ -129,19 +129,23 @@ const MovieDetails = () => {
             </div>
           </div>
         </div>
-        {/* Cast section - moved inside the background so it inherits the same theme */}
-        <div className="pt-8 pb-12 px-8 md:px-16">
-          {movie.cast && movie.cast.length > 0 ? (
-            <section className="mt-6">
-              <h2 className="text-2xl font-semibold text-white mb-4">Cast</h2>
-              <div className="flex gap-4 overflow-x-auto py-2 -mx-4 px-4 md:mx-0 md:px-0">
+        {/* Cast section - full-width panel below the poster/details */}
+        <div className="pt-6 pb-16 px-6 md:px-16">
+          <div className="max-w-6xl mx-auto bg-black/40 rounded-2xl p-6 backdrop-blur-md">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-semibold text-white">Cast</h2>
+              <div className="text-sm text-gray-300">Top billed</div>
+            </div>
+
+            {movie.cast && movie.cast.length > 0 ? (
+              <div className="flex gap-6 overflow-x-auto py-2 -mx-2 px-2">
                 {movie.cast.map((member) => (
                   <article
                     key={member.id}
-                    className="w-28 flex-shrink-0 text-center hover:scale-105 transition-transform duration-200"
+                    className="w-28 flex-shrink-0 text-center"
                     aria-label={`${member.name} as ${member.character}`}
                   >
-                    <div className="w-28 h-36 bg-zinc-800 rounded-md overflow-hidden mx-auto mb-2">
+                    <div className="w-28 h-28 rounded-full overflow-hidden mx-auto mb-3 ring-1 ring-white/10">
                       <img
                         src={member.profilePath || avatarPlaceholder}
                         alt={member.name}
@@ -150,18 +154,15 @@ const MovieDetails = () => {
                         onError={(e) => { e.currentTarget.src = avatarPlaceholder; }}
                       />
                     </div>
-                    <div className="text-white text-sm font-medium truncate">{member.name}</div>
-                    <div className="text-gray-400 text-xs truncate">{member.character}</div>
+                    <div className="text-white text-sm font-semibold truncate">{member.name}</div>
+                    <div className="text-gray-300 text-xs italic truncate">{member.character}</div>
                   </article>
                 ))}
               </div>
-            </section>
-          ) : (
-            <section className="mt-6">
-              <h2 className="text-2xl font-semibold text-white mb-2">Cast</h2>
+            ) : (
               <div className="text-gray-400">Cast information not available.</div>
-            </section>
-          )}
+            )}
+          </div>
         </div>
 
       </div>
