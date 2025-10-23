@@ -180,8 +180,6 @@ const MovieDetails = () => {
           </div>
         </div>
 
-      </div>
-
       {playerUrl && <VideoPlayer videoUrl={playerUrl} onClose={() => setPlayerUrl(null)} />}
     </>
   );
