@@ -88,75 +88,62 @@ const MovieDetails = () => {
   return (
     <>
       <div 
-        className="min-h-screen bg-cover bg-center text-white" 
+        className="min-h-screen bg-cover bg-center text-white flex items-center"
         style={{
-          backgroundImage: `linear-gradient(to right, rgba(26, 34, 51, 1) 20%, rgba(26, 34, 51, 0.7) 50%, transparent 100%), url(${base_url}${movie.backdropPath})`
+          backgroundImage: `linear-gradient(to right, rgba(26, 34, 51, 1) 0%, rgba(26, 34, 51, 0.8) 40%, rgba(26,34,51,0.6) 60%), url(${poster_url}${movie.posterPath})`,
+          backgroundRepeat: 'no-repeat'
         }}
       >
-        <div className="min-h-screen pt-24 pb-12 px-4 md:px-16">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 items-start">
-            {/* Poster column - non-sticky on all sizes so it scrolls with the page */}
-            <aside className="hidden md:block">
-              <div>
-                <img src={`${poster_url}${movie.posterPath}`} alt={movie.title} className="w-64 md:w-72 rounded-lg shadow-2xl" />
-              </div>
-            </aside>
+        <div className="w-full max-w-6xl mx-auto pt-24 pb-12 px-6 md:px-16">
+          <div className="text-left max-w-3xl">
+            <h1 className="text-4xl md:text-6xl font-black mb-2">{movie.title}</h1>
+            <div className="flex items-center gap-x-4 text-gray-300 mb-4">
+              <span>{movie.releaseDate?.substring(0, 4)}</span>
+              <span className="border-l border-gray-500 pl-4">⭐ {movie.voteAverage?.toFixed(1)} / 10</span>
+            </div>
+            <p className="text-md md:text-lg text-gray-200 mb-6 leading-relaxed">{movie.overview}</p>
 
-            {/* Main details column */}
-            <main className="flex flex-col">
-              {/* Mobile poster (visible on small screens) */}
-              <div className="md:hidden mb-6">
-                <img src={`${poster_url}${movie.posterPath}`} alt={movie.title} className="w-full rounded-lg shadow-2xl" />
-              </div>
-
-              <h1 className="text-4xl md:text-6xl font-black mb-2">{movie.title}</h1>
-              <div className="flex items-center gap-x-4 text-gray-300 mb-4">
-                <span>{movie.releaseDate?.substring(0, 4)}</span>
-                <span className="border-l border-gray-500 pl-4">⭐ {movie.voteAverage?.toFixed(1)} / 10</span>
-              </div>
-              <p className="text-md md:text-lg text-gray-200 mb-6 leading-relaxed">{movie.overview}</p>
-
-              <div className="flex items-center gap-x-4 mb-6">
-                {movie.trailerKey && (
-                  <button 
-                    onClick={() => setPlayerUrl(`https://www.youtube.com/watch?v=${movie.trailerKey}`)}
-                    className="flex items-center gap-x-2 px-6 py-3 bg-gradient-to-b from-yellow-400 to-orange-500 text-zinc-800 font-bold rounded-lg shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                  >
-                    <PlayCircle />
-                    <span>Play Trailer</span>
-                  </button>
-                )}
+            <div className="flex items-center gap-x-4 mb-6">
+              {movie.trailerKey && (
                 <button 
-                  onClick={() => setPlayerUrl(movie.videoUrl)}
-                  className="flex items-center gap-x-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg shadow-md hover:bg-white/20 transform hover:scale-105 transition-all duration-300"
+                  onClick={() => setPlayerUrl(`https://www.youtube.com/watch?v=${movie.trailerKey}`)}
+                  className="flex items-center gap-x-2 px-6 py-3 bg-gradient-to-b from-yellow-400 to-orange-500 text-zinc-800 font-bold rounded-lg shadow-md hover:shadow-xl transition-all duration-300"
                 >
-                  <Film />
-                  <span>Play Movie</span>
+                  <PlayCircle />
+                  <span>Play Trailer</span>
                 </button>
+              )}
+              <button 
+                onClick={() => setPlayerUrl(movie.videoUrl)}
+                className="flex items-center gap-x-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg shadow-md hover:bg-white/20 transition-all duration-300"
+              >
+                <Film />
+                <span>Play Movie</span>
+              </button>
+            </div>
+
+            {/* Crew info: directors and writers */}
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-6">
+                {movie.crew?.directors && movie.crew.directors.length > 0 && (
+                  <div>
+                    <div className="text-sm text-gray-400">Director</div>
+                    <div className="text-white font-medium">{movie.crew.directors.map(d => d.name).join(', ')}</div>
+                  </div>
+                )}
+
+                {movie.crew?.writers && movie.crew.writers.length > 0 && (
+                  <div>
+                    <div className="text-sm text-gray-400">Writer</div>
+                    <div className="text-white font-medium">{movie.crew.writers.map(w => w.name).join(', ')}</div>
+                  </div>
+                )}
               </div>
+            </div>
 
-              {/* Crew info: directors and writers */}
-              <div className="mb-6">
-                <div className="flex flex-wrap gap-6">
-                  {movie.crew?.directors && movie.crew.directors.length > 0 && (
-                    <div>
-                      <div className="text-sm text-gray-400">Director</div>
-                      <div className="text-white font-medium">{movie.crew.directors.map(d => d.name).join(', ')}</div>
-                    </div>
-                  )}
-
-                  {movie.crew?.writers && movie.crew.writers.length > 0 && (
-                    <div>
-                      <div className="text-sm text-gray-400">Writer</div>
-                      <div className="text-white font-medium">{movie.crew.writers.map(w => w.name).join(', ')}</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-            </main>
           </div>
         </div>
+      </div>
         {/* Cast section - full-width panel below the poster/details */}
         <div className="pt-6 pb-16 px-6 md:px-16">
           <div className="max-w-6xl mx-auto bg-black/40 rounded-2xl p-6 backdrop-blur-md">
