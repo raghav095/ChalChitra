@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import api from '../api/axios'; // 1. Import your new reusable api client
 import { PlayCircle, Film } from 'lucide-react'; 
 import VideoPlayer from '../components/VideoPlayer'; // Make sure this path is correct
+import Loader from './Loader';
 
 const MovieDetails = () => {
   const { id } = useParams(); 
@@ -29,8 +30,48 @@ const MovieDetails = () => {
 
   if (!movie) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)] text-white">
-        <h1 className="text-4xl animate-pulse">Loading...</h1>
+      <div className="min-h-screen flex items-start justify-center bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)] text-white pt-24 px-6">
+        <div className="w-full max-w-5xl">
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Poster skeleton */}
+            <div className="w-64 md:w-72 rounded-lg overflow-hidden bg-zinc-800 animate-pulse h-96" />
+
+            {/* Details skeleton */}
+            <div className="flex-1 space-y-4">
+              <div className="h-10 bg-zinc-800 rounded w-3/4 animate-pulse" />
+              <div className="flex gap-4 mt-2">
+                <div className="h-6 w-20 bg-zinc-800 rounded animate-pulse" />
+                <div className="h-6 w-24 bg-zinc-800 rounded animate-pulse" />
+              </div>
+              <div className="mt-4 space-y-2">
+                <div className="h-4 bg-zinc-800 rounded animate-pulse w-full" />
+                <div className="h-4 bg-zinc-800 rounded animate-pulse w-full" />
+                <div className="h-4 bg-zinc-800 rounded animate-pulse w-5/6" />
+                <div className="h-4 bg-zinc-800 rounded animate-pulse w-2/3" />
+              </div>
+
+              {/* Buttons skeleton */}
+              <div className="flex gap-4 mt-6">
+                <div className="h-12 w-36 bg-zinc-800 rounded-md animate-pulse" />
+                <div className="h-12 w-36 bg-zinc-800 rounded-md animate-pulse" />
+              </div>
+
+              {/* Cast skeleton row */}
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold mb-3">Cast</h3>
+                <div className="flex gap-4 overflow-x-auto">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="w-28 flex-shrink-0">
+                      <div className="w-28 h-36 bg-zinc-800 rounded-md animate-pulse" />
+                      <div className="h-3 bg-zinc-800 rounded mt-2 animate-pulse" />
+                      <div className="h-3 bg-zinc-800 rounded mt-1 animate-pulse w-4/6" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -82,6 +123,44 @@ const MovieDetails = () => {
       </div>
 
       {playerUrl && <VideoPlayer videoUrl={playerUrl} onClose={() => setPlayerUrl(null)} />}
+
+        {/* --- Cast section --- */}
+{movie.cast && movie.cast.length > 0 ? (
+  <section className="mt-12 px-4 md:px-0">
+    <h2 className="text-2xl font-semibold text-white mb-4">Cast</h2>
+    <div className="flex gap-4 overflow-x-auto py-2 -mx-4 px-4 md:mx-0 md:px-0">
+      {movie.cast.map((member) => (
+        <article
+          key={member.id}
+          className="w-28 flex-shrink-0 text-center"
+          aria-label={`${member.name} as ${member.character}`}
+        >
+          <div className="w-28 h-36 bg-zinc-800 rounded-md overflow-hidden mx-auto mb-2">
+            {member.profilePath ? (
+              <img
+                src={member.profilePath}
+                alt={member.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                No Image
+              </div>
+            )}
+          </div>
+          <div className="text-white text-sm font-medium truncate">{member.name}</div>
+          <div className="text-gray-400 text-xs truncate">{member.character}</div>
+        </article>
+      ))}
+    </div>
+  </section>
+) : (
+  <section className="mt-12 px-4 md:px-0">
+    <h2 className="text-2xl font-semibold text-white mb-2">Cast</h2>
+    <div className="text-gray-400">Cast information not available.</div>
+  </section>
+)}
     </>
   );
 };
