@@ -149,7 +149,7 @@ const MovieDetails = () => {
       </div>
         {/* Cast section - full-width panel below the poster/details */}
         <div className="pt-6 pb-16 px-6 md:px-16">
-          <div className="max-w-6xl mx-auto bg-black/40 rounded-2xl p-6 backdrop-blur-md">
+          <div className="max-w-6xl mx-auto bg-[rgba(18,24,36,0.6)] border border-white/10 rounded-2xl p-6 backdrop-blur-md">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold text-white">Cast</h2>
               <div className="text-sm text-gray-300">Top billed</div>
