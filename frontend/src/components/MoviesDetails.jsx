@@ -4,6 +4,8 @@ import api from '../api/axios'; // 1. Import your new reusable api client
 import { PlayCircle, Film } from 'lucide-react'; 
 import VideoPlayer from '../components/VideoPlayer'; // Make sure this path is correct
 import Loader from './Loader';
+import Skeleton from './Skeleton';
+import Navbarmain from './Navbarmain';
 
 const MovieDetails = () => {
   const { id } = useParams(); 
@@ -43,26 +45,26 @@ const MovieDetails = () => {
         <div className="w-full max-w-5xl">
           <div className="flex flex-col md:flex-row gap-8">
             {/* Poster skeleton */}
-            <div className="w-64 md:w-72 rounded-lg overflow-hidden bg-zinc-800 animate-pulse h-96" />
+            <Skeleton className="w-64 md:w-72 rounded-lg overflow-hidden h-96" />
 
             {/* Details skeleton */}
             <div className="flex-1 space-y-4">
-              <div className="h-10 bg-zinc-800 rounded w-3/4 animate-pulse" />
+              <Skeleton className="h-10 rounded w-3/4" />
               <div className="flex gap-4 mt-2">
-                <div className="h-6 w-20 bg-zinc-800 rounded animate-pulse" />
-                <div className="h-6 w-24 bg-zinc-800 rounded animate-pulse" />
+                <Skeleton className="h-6 w-20 rounded" />
+                <Skeleton className="h-6 w-24 rounded" />
               </div>
               <div className="mt-4 space-y-2">
-                <div className="h-4 bg-zinc-800 rounded animate-pulse w-full" />
-                <div className="h-4 bg-zinc-800 rounded animate-pulse w-full" />
-                <div className="h-4 bg-zinc-800 rounded animate-pulse w-5/6" />
-                <div className="h-4 bg-zinc-800 rounded animate-pulse w-2/3" />
+                <Skeleton className="h-4 rounded w-full" />
+                <Skeleton className="h-4 rounded w-full" />
+                <Skeleton className="h-4 rounded w-5/6" />
+                <Skeleton className="h-4 rounded w-2/3" />
               </div>
 
               {/* Buttons skeleton */}
               <div className="flex gap-4 mt-6">
-                <div className="h-12 w-36 bg-zinc-800 rounded-md animate-pulse" />
-                <div className="h-12 w-36 bg-zinc-800 rounded-md animate-pulse" />
+                <Skeleton className="h-12 w-36 rounded-md" />
+                <Skeleton className="h-12 w-36 rounded-md" />
               </div>
 
               {/* Cast skeleton row */}
@@ -71,9 +73,9 @@ const MovieDetails = () => {
                 <div className="flex gap-4 overflow-x-auto">
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className="w-28 flex-shrink-0">
-                      <div className="w-28 h-36 bg-zinc-800 rounded-md animate-pulse" />
-                      <div className="h-3 bg-zinc-800 rounded mt-2 animate-pulse" />
-                      <div className="h-3 bg-zinc-800 rounded mt-1 animate-pulse w-4/6" />
+                      <Skeleton className="w-28 h-36 rounded-md" />
+                      <Skeleton className="h-3 rounded mt-2" />
+                      <Skeleton className="h-3 rounded mt-1 w-4/6" />
                     </div>
                   ))}
                 </div>
@@ -87,6 +89,7 @@ const MovieDetails = () => {
 
   return (
     <>
+      <Navbarmain />
       <div 
         className="min-h-screen bg-cover bg-center text-white flex items-center"
         style={{
