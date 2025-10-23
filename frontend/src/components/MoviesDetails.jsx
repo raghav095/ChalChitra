@@ -27,6 +27,15 @@ const MovieDetails = () => {
 
   const base_url = "https://image.tmdb.org/t/p/original";
   const poster_url = "https://image.tmdb.org/t/p/w500";
+  const avatarPlaceholder = `data:image/svg+xml;utf8,${encodeURIComponent(`
+    <svg xmlns='http://www.w3.org/2000/svg' width='240' height='320' viewBox='0 0 240 320'>
+      <rect width='100%' height='100%' fill='%23303a4a' />
+      <g fill='%23b0b7c3'>
+        <circle cx='120' cy='96' r='56'/>
+        <path d='M40 260c0-44 40-80 80-80s80 36 80 80' />
+      </g>
+    </svg>
+  `)}`;
 
   if (!movie) {
     return (
@@ -120,47 +129,44 @@ const MovieDetails = () => {
             </div>
           </div>
         </div>
+        {/* Cast section - moved inside the background so it inherits the same theme */}
+        <div className="pt-8 pb-12 px-8 md:px-16">
+          {movie.cast && movie.cast.length > 0 ? (
+            <section className="mt-6">
+              <h2 className="text-2xl font-semibold text-white mb-4">Cast</h2>
+              <div className="flex gap-4 overflow-x-auto py-2 -mx-4 px-4 md:mx-0 md:px-0">
+                {movie.cast.map((member) => (
+                  <article
+                    key={member.id}
+                    className="w-28 flex-shrink-0 text-center hover:scale-105 transition-transform duration-200"
+                    aria-label={`${member.name} as ${member.character}`}
+                  >
+                    <div className="w-28 h-36 bg-zinc-800 rounded-md overflow-hidden mx-auto mb-2">
+                      <img
+                        src={member.profilePath || avatarPlaceholder}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => { e.currentTarget.src = avatarPlaceholder; }}
+                      />
+                    </div>
+                    <div className="text-white text-sm font-medium truncate">{member.name}</div>
+                    <div className="text-gray-400 text-xs truncate">{member.character}</div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : (
+            <section className="mt-6">
+              <h2 className="text-2xl font-semibold text-white mb-2">Cast</h2>
+              <div className="text-gray-400">Cast information not available.</div>
+            </section>
+          )}
+        </div>
+
       </div>
 
       {playerUrl && <VideoPlayer videoUrl={playerUrl} onClose={() => setPlayerUrl(null)} />}
-
-        {/* --- Cast section --- */}
-{movie.cast && movie.cast.length > 0 ? (
-  <section className="mt-12 px-4 md:px-0">
-    <h2 className="text-2xl font-semibold text-white mb-4">Cast</h2>
-    <div className="flex gap-4 overflow-x-auto py-2 -mx-4 px-4 md:mx-0 md:px-0">
-      {movie.cast.map((member) => (
-        <article
-          key={member.id}
-          className="w-28 flex-shrink-0 text-center"
-          aria-label={`${member.name} as ${member.character}`}
-        >
-          <div className="w-28 h-36 bg-zinc-800 rounded-md overflow-hidden mx-auto mb-2">
-            {member.profilePath ? (
-              <img
-                src={member.profilePath}
-                alt={member.name}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                No Image
-              </div>
-            )}
-          </div>
-          <div className="text-white text-sm font-medium truncate">{member.name}</div>
-          <div className="text-gray-400 text-xs truncate">{member.character}</div>
-        </article>
-      ))}
-    </div>
-  </section>
-) : (
-  <section className="mt-12 px-4 md:px-0">
-    <h2 className="text-2xl font-semibold text-white mb-2">Cast</h2>
-    <div className="text-gray-400">Cast information not available.</div>
-  </section>
-)}
     </>
   );
 };
