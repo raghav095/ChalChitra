@@ -26,6 +26,7 @@ const SearchBar = () => {
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
 
+  
   useEffect(() => {
     const q = String(query || '').trim();
     if (debounceRef.current) clearTimeout(debounceRef.current);
