@@ -1,13 +1,16 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbarmain from "../components/Navbarmain";
 import MovieRow from "../components/MovieRow.jsx";
 import { useDispatch } from "react-redux";
 import {login} from "../features/userSlice.js"
+import api from '../api/axios';
 
 
 const Mainpage = () => {
 
      const dispatch = useDispatch();
+
+    const [genres, setGenres] = useState([]);
 
     useEffect(() => {
 
@@ -28,6 +31,23 @@ const Mainpage = () => {
       });
   }, [dispatch]);
 
+  useEffect(() => {
+    let mounted = true;
+    async function loadGenres() {
+      try {
+        const res = await api.get('/api/movies/genres');
+        if (!mounted) return;
+        // choose a few popular genres to show, limit to 6
+        const list = Array.isArray(res.data) ? res.data.slice(0, 8) : [];
+        setGenres(list);
+      } catch (err) {
+        console.error('Failed to load genres', err);
+      }
+    }
+    loadGenres();
+    return () => { mounted = false };
+  }, []);
+
 
 
   return (
@@ -39,9 +59,11 @@ const Mainpage = () => {
             title="Our Curated Collection" 
             fetchUrl="/api/movies" 
           />
-          
-          {/* You can add more rows like this */}
-          {/* <MovieRow title="Classic Cartoons" fetchUrl="/api/movies/cartoons" /> */}
+
+          {/* Genre rows loaded dynamically from TMDB genres */}
+          {genres.map(g => (
+            <MovieRow key={g.id} title={g.name} fetchUrl={`/api/movies/genre/${g.id}`} />
+          ))}
         </div>
       </div>
     </>

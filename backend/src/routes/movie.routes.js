@@ -23,6 +23,34 @@ router.get('/search', asyncHandler(async (req, res) => {
   res.json(results);
 }));
 
+// TMDB genres list (proxied)
+router.get('/genres', asyncHandler(async (req, res) => {
+  const genresUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.TMDB_API_KEY}&language=en-US`;
+  const tmdbRes = await axios.get(genresUrl);
+  res.json(tmdbRes.data.genres || []);
+}));
+
+// Discover movies by genre id (proxied) - returns TMDB style results mapped to our front-end shape
+router.get('/genre/:genreId', asyncHandler(async (req, res) => {
+  const { genreId } = req.params;
+  const page = Math.max(1, parseInt(req.query.page)) || 1;
+  const discoverUrl = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_API_KEY}&with_genres=${encodeURIComponent(genreId)}&sort_by=popularity.desc&page=${page}`;
+  const tmdbRes = await axios.get(discoverUrl);
+  const results = Array.isArray(tmdbRes.data.results) ? tmdbRes.data.results : [];
+
+  // Map TMDB results into the shape MovieRow expects: tmdbId, title, posterPath
+  const mapped = results.map(m => ({
+    tmdbId: m.id,
+    title: m.title || m.name,
+    posterPath: m.poster_path ? m.poster_path : null,
+    backdropPath: m.backdrop_path || null,
+    releaseDate: m.release_date || m.first_air_date || null,
+    voteAverage: m.vote_average || null
+  }));
+
+  res.json(mapped);
+}));
+
 router.get('/:id', asyncHandler(async (req, res) => {
   const { id } = req.params;
 
