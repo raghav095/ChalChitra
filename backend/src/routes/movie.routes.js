@@ -23,11 +23,25 @@ function setCache(key, value, ttlMs) {
 }
 
 router.get('/', asyncHandler(async (req, res) => {
-  // Return curated collection: exclude movies that were added by the importer
-  // (imported movies have `isImported: true`). This keeps the "Our Curated Collection"
-  // row showing the pre-existing curated items while newly imported movies appear
-  // only in genre-specific rows (via /by-genre/:id).
-  const allMovies = await Movie.find({ isImported: { $ne: true } });
+  // Return all movies in the database (single collection grid view)
+  // If `playable=true` is supplied, only return movies with a play-ready URL
+  // (YouTube links or direct MP4 links).
+  const { playable } = req.query;
+  if (playable === '1' || playable === 'true') {
+    // simple regex to detect YouTube URLs or direct mp4 files
+    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)/i;
+    const mp4Regex = /\.mp4($|\?)/i;
+    const movies = await Movie.find({
+      videoUrl: { $exists: true, $ne: null },
+      $or: [
+        { videoUrl: { $regex: youtubeRegex } },
+        { videoUrl: { $regex: mp4Regex } }
+      ]
+    }).lean();
+    return res.json(movies);
+  }
+
+  const allMovies = await Movie.find({});
   res.json(allMovies);
 }));
 

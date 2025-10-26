@@ -210,27 +210,22 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
 
             {/* Conditional rendering of player only after user interaction */}
             {hasUserInteracted && (
-              (isArchiveUrl && currentUrlIndex === 0) ? (
-                <iframe
+              (isArchiveUrl && currentUrl.endsWith('.mp4')) ? (
+                // Use native <video> element for direct MP4s for faster startup on most browsers
+                <video
                   src={currentUrl}
-                  width="100%"
-                  height="100%"
-                  frameBorder="0"
-                  allowFullScreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  title="Movie Player"
-                  loading="lazy"
-                  onLoad={() => {
-                    setIsReady(true);
-                    setIsLoading(false);
-                  }}
-                  onError={() => handleError({ type: 'iframe', message: 'Iframe failed to load' })}
-                  style={{ 
-                    border: 'none',
-                    backgroundColor: '#000'
-                  }}
+                  controls
+                  autoPlay={isPlaying}
+                  playsInline
+                  preload="auto"
+                  className="w-full h-full bg-black"
+                  onCanPlay={() => { setIsReady(true); setIsLoading(false); }}
+                  onPlay={handlePlay}
+                  onPause={handlePause}
+                  onError={(e) => handleError(e)}
+                  controlsList="nodownload"
                 />
-              ) : (
+              ) : ( 
                 <ReactPlayer
                   key={currentUrl} // Force re-render when URL changes
                   ref={playerRef}

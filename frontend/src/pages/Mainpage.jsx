@@ -36,7 +36,8 @@ const Mainpage = () => {
     let mounted = true;
     async function loadMovies() {
       try {
-        const res = await api.get('/api/movies');
+        // Request only play-ready movies (YouTube or direct MP4) for faster playback UX
+        const res = await api.get('/api/movies?playable=1');
         if (!mounted) return;
         const list = Array.isArray(res.data) ? res.data : [];
         setMovies(list);
@@ -57,30 +58,27 @@ const Mainpage = () => {
       <div className="w-full min-h-screen bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)]">
         <div className="pt-24 px-4"> 
           <div className="text-white ml-5 my-4">
-            <h2 className="text-2xl font-bold pb-2">New Arrivals</h2>
-            <MovieRow title="New Arrivals" fetchUrl="/api/movies/imported?limit=48&minVote=0" />
+            <h2 className="text-2xl font-bold pb-2">Our Collection</h2>
 
-            <h2 className="text-2xl font-bold pt-6 pb-2">Our Curated Collection</h2>
-
-            {/* Render curated movies in rows of 12 posters per line */}
-            <div className="grid grid-cols-12 gap-4">
-              {movies.slice(0, 120).map((movie, idx) => {
+            {/* Single combined collection as a responsive grid (12 columns on desktop, responsive on smaller screens) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-12 gap-4">
+              {movies.slice(0, 240).map((movie, idx) => {
                 const base_url = "https://image.tmdb.org/t/p/w500";
                 return (
                   <Link
                     key={movie.tmdbId || movie._id || idx}
                     to={`/movie/${movie.tmdbId}`}
-                    className="block w-full h-0 pb-[150%] relative rounded-md overflow-hidden bg-slate-800"
+                    className="block w-full rounded-md overflow-hidden bg-slate-800 aspect-[2/3]"
                   >
                     {movie.posterPath ? (
                       <img
                         loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="w-full h-full object-cover"
                         src={`${base_url}${movie.posterPath}`}
                         alt={movie.title}
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-300">No image</div>
+                      <div className="w-full h-full flex items-center justify-center text-sm text-gray-300">No image</div>
                     )}
                   </Link>
                 );
