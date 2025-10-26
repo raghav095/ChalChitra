@@ -28,14 +28,16 @@ router.get('/', asyncHandler(async (req, res) => {
   // (YouTube links or direct MP4 links).
   const { playable } = req.query;
   if (playable === '1' || playable === 'true') {
-    // simple regex to detect YouTube URLs or direct mp4 files
+    // regex to detect play-ready sources: YouTube, direct mp4, or Internet Archive embeds/details
     const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)/i;
     const mp4Regex = /\.mp4($|\?)/i;
+    const archiveRegex = /archive\.org\/(embed|details)\//i;
     const movies = await Movie.find({
       videoUrl: { $exists: true, $ne: null },
       $or: [
         { videoUrl: { $regex: youtubeRegex } },
-        { videoUrl: { $regex: mp4Regex } }
+        { videoUrl: { $regex: mp4Regex } },
+        { videoUrl: { $regex: archiveRegex } }
       ]
     }).lean();
     return res.json(movies);

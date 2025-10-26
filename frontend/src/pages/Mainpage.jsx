@@ -70,16 +70,18 @@ const Mainpage = () => {
                     to={`/movie/${movie.tmdbId}`}
                     className="block w-full rounded-md overflow-hidden bg-slate-800 aspect-[2/3]"
                   >
-                    {movie.posterPath ? (
-                      <img
-                        loading="lazy"
-                        className="w-full h-full object-cover"
-                        src={`${base_url}${movie.posterPath}`}
-                        alt={movie.title}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm text-gray-300">No image</div>
-                    )}
+                        {movie.posterPath ? (
+                          // If posterPath is a full URL (starts with http), use it directly.
+                          // Otherwise assume it's a TMDB path and prefix with the TMDB image base url.
+                          <img
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                            src={movie.posterPath.startsWith('http') ? movie.posterPath : `${base_url}${movie.posterPath}`}
+                            alt={movie.title}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-sm text-gray-300">No image</div>
+                        )}
                   </Link>
                 );
               })}
