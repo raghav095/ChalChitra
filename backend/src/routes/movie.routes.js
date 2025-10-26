@@ -23,7 +23,11 @@ function setCache(key, value, ttlMs) {
 }
 
 router.get('/', asyncHandler(async (req, res) => {
-  const allMovies = await Movie.find({}); 
+  // Return curated collection: exclude movies that were added by the importer
+  // (imported movies have `isImported: true`). This keeps the "Our Curated Collection"
+  // row showing the pre-existing curated items while newly imported movies appear
+  // only in genre-specific rows (via /by-genre/:id).
+  const allMovies = await Movie.find({ isImported: { $ne: true } });
   res.json(allMovies);
 }));
 
