@@ -161,86 +161,89 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
               </div>
             )}
             
-            {/* Manual play button overlay - only for ReactPlayer, not iframe */}
-            {isReady && !isPlaying && !isArchiveUrl && (
-              <div className="absolute inset-0 flex items-center justify-center text-white bg-black/50 z-10">
-                <button 
-                  onClick={handleManualPlay}
-                  className="bg-yellow-400 text-black px-8 py-4 rounded-lg text-xl font-semibold hover:bg-yellow-300 transition-colors flex items-center gap-3 shadow-lg"
-                >
-                  <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                  {isYouTubeUrl ? 'Play Trailer' : 'Play Movie'}
-                </button>
+            {/* Manual play overlay: we DON'T render the player until the user clicks Play. */}
+            {!hasUserInteracted && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="text-center">
+                  <button
+                    onClick={() => { setHasUserInteracted(true); setIsPlaying(true); }}
+                    className="bg-yellow-400 text-black px-8 py-4 rounded-lg text-xl font-semibold hover:bg-yellow-300 transition-colors flex items-center gap-3 shadow-lg"
+                  >
+                    <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    {isYouTubeUrl ? 'Play Trailer' : 'Play Movie'}
+                  </button>
+                  <p className="mt-3 text-sm text-gray-300">Click to start playback. Video will load on demand.</p>
+                </div>
               </div>
             )}
-            
-            {/* Conditional rendering based on video type and current URL */}
-            {isArchiveUrl && currentUrlIndex === 0 ? (
-              // Use iframe for original Archive.org embed URL
-              <iframe
-                src={currentUrl}
-                width="100%"
-                height="100%"
-                frameBorder="0"
-                allowFullScreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                title="Movie Player"
-                loading="lazy"
-                onLoad={() => {
-                  setIsReady(true);
-                  setIsLoading(false);
-                }}
-                onError={() => handleError({ type: 'iframe', message: 'Iframe failed to load' })}
-                style={{ 
-                  border: 'none',
-                  backgroundColor: '#000'
-                }}
-              />
-            ) : (
-              // Use ReactPlayer for all other URLs (including Archive.org fallbacks)
-              <ReactPlayer
-                key={currentUrl} // Force re-render when URL changes
-                ref={playerRef}
-                url={currentUrl}
-                controls={true}
-                playing={isPlaying}
-                width="100%"
-                height="100%"
-                onError={handleError}
-                onReady={handleReady}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onBuffer={() => setIsLoading(true)}
-                onBufferEnd={() => setIsLoading(false)}
-                pip={false}
-                stopOnUnmount={true}
-                config={{
-                  youtube: {
-                    playerVars: {
-                      autoplay: 0,
-                      controls: 1,
-                      rel: 0,
-                      showinfo: 0,
-                      modestbranding: 1,
-                      enablejsapi: 1
-                    }
-                  },
-                  file: {
-                    attributes: {
-                      playsInline: true,
-                      preload: 'metadata',
-                      crossOrigin: 'anonymous',
-                      controlsList: 'nodownload'
+
+            {/* Conditional rendering of player only after user interaction */}
+            {hasUserInteracted && (
+              (isArchiveUrl && currentUrlIndex === 0) ? (
+                <iframe
+                  src={currentUrl}
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  title="Movie Player"
+                  loading="lazy"
+                  onLoad={() => {
+                    setIsReady(true);
+                    setIsLoading(false);
+                  }}
+                  onError={() => handleError({ type: 'iframe', message: 'Iframe failed to load' })}
+                  style={{ 
+                    border: 'none',
+                    backgroundColor: '#000'
+                  }}
+                />
+              ) : (
+                <ReactPlayer
+                  key={currentUrl} // Force re-render when URL changes
+                  ref={playerRef}
+                  url={currentUrl}
+                  controls={true}
+                  playing={isPlaying}
+                  width="100%"
+                  height="100%"
+                  onError={handleError}
+                  onReady={handleReady}
+                  onPlay={handlePlay}
+                  onPause={handlePause}
+                  onBuffer={() => setIsLoading(true)}
+                  onBufferEnd={() => setIsLoading(false)}
+                  pip={false}
+                  stopOnUnmount={true}
+                  config={{
+                    youtube: {
+                      playerVars: {
+                        autoplay: 0,
+                        controls: 1,
+                        rel: 0,
+                        showinfo: 0,
+                        modestbranding: 1,
+                        enablejsapi: 1
+                      }
                     },
-                    forceVideo: true,
-                    forceAudio: false,
-                    forceHLS: false,
-                    forceDASH: false
-                  }
-                }}
-              />
+                    file: {
+                      attributes: {
+                        playsInline: true,
+                        preload: 'metadata',
+                        crossOrigin: 'anonymous',
+                        controlsList: 'nodownload'
+                      },
+                      forceVideo: true,
+                      forceAudio: false,
+                      forceHLS: false,
+                      forceDASH: false
+                    }
+                  }}
+                />
+              )
             )}
           </div>
         )}

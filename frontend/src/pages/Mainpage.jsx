@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbarmain from "../components/Navbarmain";
 import MovieRow from "../components/MovieRow.jsx";
+import { Link } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import {login} from "../features/userSlice.js"
 import api from '../api/axios';
@@ -10,7 +11,7 @@ const Mainpage = () => {
 
      const dispatch = useDispatch();
 
-    const [genres, setGenres] = useState([]);
+  const [movies, setMovies] = useState([]);
 
     useEffect(() => {
 
@@ -33,41 +34,18 @@ const Mainpage = () => {
 
   useEffect(() => {
     let mounted = true;
-    async function loadGenres() {
+    async function loadMovies() {
       try {
-        const res = await api.get('/api/movies/genres');
+        const res = await api.get('/api/movies');
         if (!mounted) return;
-        // choose a few popular genres to show, limit to 8
-        const list = Array.isArray(res.data) ? res.data.slice(0, 8) : [];
-        // fallback to a curated selection if TMDB call fails or returns empty
-        if (!list || list.length === 0) {
-          const fallback = [
-            { id: 28, name: 'Action' },
-            { id: 12, name: 'Adventure' },
-            { id: 35, name: 'Comedy' },
-            { id: 18, name: 'Drama' },
-            { id: 10749, name: 'Romance' },
-            { id: 27, name: 'Horror' },
-            { id: 16, name: 'Animation' },
-            { id: 878, name: 'Science Fiction' }
-          ];
-          setGenres(fallback);
-        } else {
-          setGenres(list);
-        }
+        const list = Array.isArray(res.data) ? res.data : [];
+        setMovies(list);
       } catch (err) {
-        console.error('Failed to load genres', err);
-        // on error, use curated fallback genres so main page still shows rows
-        setGenres([
-          { id: 28, name: 'Action' },
-          { id: 12, name: 'Adventure' },
-          { id: 35, name: 'Comedy' },
-          { id: 18, name: 'Drama' },
-          { id: 10749, name: 'Romance' },
-        ]);
+        console.error('Failed to load movies', err);
+        setMovies([]);
       }
     }
-    loadGenres();
+    loadMovies();
     return () => { mounted = false };
   }, []);
 
@@ -78,15 +56,34 @@ const Mainpage = () => {
       <Navbarmain />
       <div className="w-full min-h-screen bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)]">
         <div className="pt-24 px-4"> 
-          <MovieRow 
-            title="Our Curated Collection" 
-            fetchUrl="/api/movies" 
-          />
+          <div className="text-white ml-5 my-4">
+            <h2 className="text-2xl font-bold pb-2">Our Curated Collection</h2>
 
-          {/* Genre rows loaded dynamically from TMDB genres (use DB-backed by-genre endpoint) */}
-          {genres.map(g => (
-            <MovieRow key={g.id} title={g.name} fetchUrl={`/api/movies/by-genre/${g.id}`} />
-          ))}
+            {/* Render movies in rows of 12 posters per line */}
+            <div className="grid grid-cols-12 gap-4">
+              {movies.slice(0, 120).map((movie, idx) => {
+                const base_url = "https://image.tmdb.org/t/p/w500";
+                return (
+                  <Link
+                    key={movie.tmdbId || movie._id || idx}
+                    to={`/movie/${movie.tmdbId}`}
+                    className="block w-full h-0 pb-[150%] relative rounded-md overflow-hidden bg-slate-800"
+                  >
+                    {movie.posterPath ? (
+                      <img
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        src={`${base_url}${movie.posterPath}`}
+                        alt={movie.title}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-300">No image</div>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </>
