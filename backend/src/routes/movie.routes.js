@@ -59,6 +59,29 @@ router.get('/genres', asyncHandler(async (req, res) => {
   res.json(genres);
 }));
 
+// Return movies that were added by the importer (new arrivals)
+router.get('/imported', asyncHandler(async (req, res) => {
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 48));
+  // Optionally allow a quality filter: minVote
+  const minVote = parseFloat(req.query.minVote) || 0;
+
+  const query = { isImported: true };
+  if (minVote > 0) query.voteAverage = { $gte: minVote };
+
+  const movies = await Movie.find(query).sort({ createdAt: -1 }).limit(limit).lean();
+
+  const mapped = (Array.isArray(movies) ? movies : []).map(m => ({
+    tmdbId: m.tmdbId,
+    title: m.title,
+    posterPath: m.posterPath || null,
+    backdropPath: m.backdropPath || null,
+    releaseDate: m.releaseDate || null,
+    voteAverage: m.voteAverage || null
+  }));
+
+  res.json(mapped);
+}));
+
 // Discover movies by genre id (proxied) - returns TMDB style results mapped to our front-end shape
 router.get('/genre/:genreId', asyncHandler(async (req, res) => {
   const { genreId } = req.params;

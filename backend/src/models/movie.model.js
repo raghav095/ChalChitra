@@ -12,6 +12,6 @@ const movieSchema = new mongoose.Schema({
   genreIds: { type: [Number], default: [] },
   videoUrl: { type: String },
   source: { type: String },
-});
+}, { timestamps: true });
 
 export const Movie = mongoose.model("Movie", movieSchema);

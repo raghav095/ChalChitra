@@ -22,17 +22,37 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
     if (!isArchiveUrl || !url.includes('/embed/')) return [url];
     
     const identifier = url.split('/embed/')[1];
+    // Prefer direct MP4 URLs first (faster to start), then download/serve, then details, then embed
     return [
-      url, // Original embed URL
-      `https://archive.org/details/${identifier}`, // Details page
       `https://ia902707.us.archive.org/17/items/${identifier}/${identifier}.mp4`, // Direct MP4 (common server)
       `https://archive.org/download/${identifier}/${identifier}.mp4`, // Download URL
-      `https://archive.org/serve/${identifier}/${identifier}.mp4` // Serve URL
+      `https://archive.org/serve/${identifier}/${identifier}.mp4`, // Serve URL
+      `https://archive.org/details/${identifier}`, // Details page
+      url // Original embed URL (iframe)
     ];
   };
 
   const urlOptions = isArchiveUrl ? getArchiveUrls(videoUrl) : [videoUrl];
   const currentUrl = urlOptions[currentUrlIndex];
+
+  // Try to quickly probe the list of urlOptions and pick the first reachable one (fast HEAD request with timeout).
+  const probeBestUrlIndex = async () => {
+    for (let i = 0; i < urlOptions.length; i++) {
+      const u = urlOptions[i];
+      try {
+        const controller = new AbortController();
+        const to = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch(u, { method: 'HEAD', mode: 'cors', signal: controller.signal });
+        clearTimeout(to);
+        if (res && res.ok) {
+          return i;
+        }
+      } catch (err) {
+        // probe failed — try next
+      }
+    }
+    return 0;
+  };
 
   useEffect(() => {
     if (!isValidUrl) {
@@ -102,8 +122,17 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
 
   // 7. Manual play button
   const handleManualPlay = () => {
-    setHasUserInteracted(true);
-    setIsPlaying(true);
+    (async () => {
+      setHasUserInteracted(true);
+      // probe preferred URL index quickly to reduce ReactPlayer retries
+      try {
+        const best = await probeBestUrlIndex();
+        setCurrentUrlIndex(best);
+      } catch (err) {
+        // ignore probe errors
+      }
+      setIsPlaying(true);
+    })();
   };
 
   // 7. Handle close with proper cleanup

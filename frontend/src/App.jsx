@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/navbar.jsx';
 import HeroSection from './pages/landingPage.jsx';
 import Mainpage from './pages/Mainpage.jsx';
-import Explorepage from './pages/Explorepage.jsx';
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "./features/userSlice.js";
@@ -29,7 +28,6 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<HeroSection />} />
         <Route path="/Mainpage" element={<Mainpage />} />
-        <Route path="/Explore" element={<Explorepage />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/search" element={<SearchResults />} />
       </Routes>

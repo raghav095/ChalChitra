@@ -45,12 +45,7 @@ const Navbarmain = () => {
         >
           Home
         </Link>
-        <Link 
-          to="/explore" 
-          className="px-5 py-2 text-gray-200 font-semibold rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 hover:bg-white/20 hover:border-white/30"
-        >
-          Explore
-        </Link>
+        {/* Explore link removed because Explore page was deleted */}
         <SearchBar />
       </div>
 

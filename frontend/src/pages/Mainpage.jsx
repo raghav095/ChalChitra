@@ -57,9 +57,12 @@ const Mainpage = () => {
       <div className="w-full min-h-screen bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)]">
         <div className="pt-24 px-4"> 
           <div className="text-white ml-5 my-4">
-            <h2 className="text-2xl font-bold pb-2">Our Curated Collection</h2>
+            <h2 className="text-2xl font-bold pb-2">New Arrivals</h2>
+            <MovieRow title="New Arrivals" fetchUrl="/api/movies/imported?limit=48&minVote=0" />
 
-            {/* Render movies in rows of 12 posters per line */}
+            <h2 className="text-2xl font-bold pt-6 pb-2">Our Curated Collection</h2>
+
+            {/* Render curated movies in rows of 12 posters per line */}
             <div className="grid grid-cols-12 gap-4">
               {movies.slice(0, 120).map((movie, idx) => {
                 const base_url = "https://image.tmdb.org/t/p/w500";
