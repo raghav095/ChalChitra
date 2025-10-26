@@ -8,6 +8,8 @@ const movieSchema = new mongoose.Schema({
   backdropPath: { type: String },
   releaseDate: { type: String },
   voteAverage: { type: Number },
+  // TMDB genre ids for the movie (e.g. [28, 12])
+  genreIds: { type: [Number], default: [] },
   videoUrl: { type: String },
   source: { type: String },
 });
