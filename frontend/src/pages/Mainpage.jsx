@@ -56,12 +56,12 @@ const Mainpage = () => {
     <>
       <Navbarmain />
       <div className="w-full min-h-screen bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)]">
-        <div className="pt-24 px-4"> 
-          <div className="text-white ml-5 my-4">
-            <h2 className="text-2xl font-bold pb-2">Our Collection</h2>
+        <div className="pt-20 sm:pt-24 px-3 sm:px-4"> 
+          <div className="text-white ml-2 sm:ml-5 my-4">
+            <h2 className="text-xl sm:text-2xl font-bold pb-2">Our Collection</h2>
 
-            {/* Single combined collection as a responsive grid (12 columns on desktop, responsive on smaller screens) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-12 gap-4">
+            {/* Single combined collection as a responsive grid (responsive columns) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4">
               {movies.slice(0, 240).map((movie, idx) => {
                 const base_url = "https://image.tmdb.org/t/p/w500";
                 return (

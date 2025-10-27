@@ -21,16 +21,16 @@ const MovieRow = ({ title, fetchUrl }) => {
   const base_url = "https://image.tmdb.org/t/p/w500";
 
   return (
-    <div className="text-white ml-5 my-4">
-      <h2 className="text-2xl font-bold pb-2">{title}</h2>
+    <div className="text-white ml-4 sm:ml-5 my-4">
+      <h2 className="text-xl sm:text-2xl font-bold pb-2">{title}</h2>
       
-      <div className="flex overflow-y-hidden overflow-x-scroll py-5 scrollbar-hide">
-        <div className="flex space-x-4">
+      <div className="flex overflow-y-hidden overflow-x-scroll py-3 sm:py-5 scrollbar-hide">
+        <div className="flex space-x-3 sm:space-x-4">
           {Array.isArray(movies) && movies.map(movie => (
             <Link 
               to={`/movie/${movie.tmdbId}`} 
               key={movie.tmdbId}
-              className="block w-40 aspect-[2/3] bg-slate-800 rounded-md overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-105 hover:shadow-xl"
+              className="block w-28 sm:w-40 aspect-[2/3] bg-slate-800 rounded-md overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-105 hover:shadow-xl"
             >
               <img
                 className="w-full h-full object-cover" 
