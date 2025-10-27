@@ -52,12 +52,8 @@ const SearchResults = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  // Clear query and focus search input in navbar
-                  navigate('/search');
-                  setTimeout(() => {
-                    const input = document.querySelector('input[placeholder="Movies, series, cartoons..."]');
-                    if (input) input.focus();
-                  }, 80);
+                  // Navigate back to main page so user can browse and retry
+                  navigate('/Mainpage');
                 }}
                 className="bg-yellow-400 text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-300 transition"
               >
@@ -66,7 +62,8 @@ const SearchResults = () => {
               <button
                 onClick={() => {
                   // Suggest a sample search
-                  navigate(`/search?q=${encodeURIComponent('The Charlie Chaplin Festival')}`);
+                  // Navigate to main page with a prefilled query so the navbar search can pick it up
+                  navigate(`/Mainpage?q=${encodeURIComponent('The Charlie Chaplin Festival')}`);
                 }}
                 className="px-4 py-2 border border-white/20 rounded-md text-white hover:bg-white/5 transition"
               >

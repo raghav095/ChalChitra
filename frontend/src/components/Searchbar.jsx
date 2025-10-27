@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
 
 const SearchBar = () => {
@@ -10,6 +10,7 @@ const SearchBar = () => {
   const [show, setShow] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const inputRef = useRef(null);
   const containerRef = useRef(null);
   const debounceRef = useRef(null);
@@ -28,6 +29,13 @@ const SearchBar = () => {
 
   
   useEffect(() => {
+    // If a q param exists in the URL (e.g. navigating from SearchResults example), prefill the input
+    const initialQ = String(searchParams.get('q') || '').trim();
+    if (initialQ.length > 0) {
+      setQuery(initialQ);
+      // Also open suggestions if long enough will be handled by the query effect
+    }
+
     const q = String(query || '').trim();
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
