@@ -78,13 +78,12 @@ Frontend (Vite):
 
 ## Screenshots
 
-The screenshots are stored in the frontend assets folder and referenced here:
+
 
 ![Landing Page](frontend/src/assets/landingpage.png)
 
 ![Movie Details](frontend/src/assets/moviedetails.png)
 
-If the images do not appear, ensure the files exist at `frontend/src/assets/landingpage.png` and `frontend/src/assets/moviedetails.png` and that they are committed to the repository.
 
 ## Troubleshooting
 
