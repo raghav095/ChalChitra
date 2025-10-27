@@ -70,18 +70,20 @@ function HeroSection() {
 
             {/* Existing landing page content */}
 
-            <div className="relative w-full h-screen">
+            <div className="relative w-full min-h-[60vh] sm:h-screen">
                 {/* Hero image as background with fade-in animation */}
                 <motion.img
                     src={heroImage}
                     alt="Hero"
-                    className="absolute inset-0 w-full h-full object-cover -z-10"
+                    className="absolute inset-0 w-full h-full object-cover object-center -z-10"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1.2 }}
                 />
                 {/* Only show ImageText above the image */}
-                <ImageText />
+                <div className="px-4 sm:px-8">
+                    <ImageText />
+                </div>
                 {/* Navbar above image */}
                 <Navbar />
             </div>

@@ -24,24 +24,24 @@ const Navbar = () => {
     <>
 
     {/* Logo is only inside the navbar below */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-transparent px-6 py-4 flex justify-between items-center">
+  <nav className="fixed top-0 left-0 w-full z-50 bg-transparent px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="drop-shadow-lg">
-  <Link to="/">
-    <img
-      src={Chalchitra}
-      alt="ChalChitra Logo"
-      className="h-[100px] w-[220px] object-contain block"
-    />
-  </Link>
-</div>
+      <Link to="/">
+        <img
+          src={Chalchitra}
+          alt="ChalChitra Logo"
+          className="h-8 sm:h-12 md:h-16 w-auto object-contain block"
+        />
+      </Link>
+    </div>
 
         
         {!hideRegister && (
           <>
             <button
               onClick={modelpop}
-              className="login-gradient-btn px-5 py-2 rounded-xl shadow-md font-semibold cursor-pointer text-white transition"
+              className="login-gradient-btn px-4 py-1.5 rounded-lg shadow-md font-semibold cursor-pointer text-white transition hidden sm:inline-block"
             >
               Login
             </button>
