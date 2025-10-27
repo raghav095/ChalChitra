@@ -169,8 +169,8 @@ License
 
 
 
-![Landing Page](Chalchitra-app\frontend\src\assets\landingpage.png)
+![Landing Page](\frontend\src\assets\landingpage.png)
 
-![Movie Details](Chalchitra-app\frontend\src\assets\moviedetails.png)
+![Movie Details](\frontend\src\assets\moviedetails.png)
 
 
