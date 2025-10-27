@@ -61,9 +61,23 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
     } else {
       setError(false);
       setIsLoading(true);
-      setCurrentUrlIndex(0); // Reset to first URL when videoUrl changes
+      // Reset to the embed URL for archive items so the Archive player UI loads immediately
+      if (isArchiveUrl && urlOptions && urlOptions.length) {
+        setCurrentUrlIndex(urlOptions.length - 1);
+      } else {
+        setCurrentUrlIndex(0);
+      }
     }
   }, [videoUrl, isValidUrl]);
+
+  // If the component was opened by a user action (e.g. clicking Play), treat
+  // the mount as a user interaction so playback can start without a second click.
+  useEffect(() => {
+    if (videoUrl) {
+      setHasUserInteracted(true);
+      setIsPlaying(true);
+    }
+  }, [videoUrl]);
 
   
 
@@ -133,20 +147,8 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
       // Start playing the embed immediately
       setIsPlaying(true);
 
-      // Probe in background for a faster direct MP4 and switch when found
-      (async () => {
-        try {
-          const best = await probeBestUrlIndex();
-          // If probe found a different URL (likely an MP4) switch to it
-          if (typeof best === 'number' && best !== embedIndex) {
-            setCurrentUrlIndex(best);
-            // ensure playing after switch
-            setIsPlaying(true);
-          }
-        } catch (err) {
-          // ignore probe errors — embed will continue
-        }
-      })();
+      // NOTE: Do not probe/switch automatically — keep the flow simple and
+      // render the Archive embed immediately (matches previous working behavior).
     } else {
       // Non-archive sources: pick first option and play
       setCurrentUrlIndex(0);
