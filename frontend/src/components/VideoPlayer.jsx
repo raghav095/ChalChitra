@@ -41,7 +41,7 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
       const u = urlOptions[i];
       try {
         const controller = new AbortController();
-        const to = setTimeout(() => controller.abort(), 2000);
+  const to = setTimeout(() => controller.abort(), 700);
         const res = await fetch(u, { method: 'HEAD', mode: 'cors', signal: controller.signal });
         clearTimeout(to);
         if (res && res.ok) {
@@ -122,17 +122,36 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
 
   // 7. Manual play button
   const handleManualPlay = () => {
-    (async () => {
-      setHasUserInteracted(true);
-      // probe preferred URL index quickly to reduce ReactPlayer retries
-      try {
-        const best = await probeBestUrlIndex();
-        setCurrentUrlIndex(best);
-      } catch (err) {
-        // ignore probe errors
-      }
+    // Try to start playback immediately using Archive's embed (fast to show player UI),
+    // then probe in background for a direct MP4 and switch to it if found quickly.
+    setHasUserInteracted(true);
+    if (isArchiveUrl && urlOptions && urlOptions.length) {
+      const embedIndex = urlOptions.length - 1; // embed URL is last in getArchiveUrls()
+      // Render embed first so the user sees player and it can start loading immediately
+      setCurrentUrlIndex(embedIndex);
+
+      // Start playing the embed immediately
       setIsPlaying(true);
-    })();
+
+      // Probe in background for a faster direct MP4 and switch when found
+      (async () => {
+        try {
+          const best = await probeBestUrlIndex();
+          // If probe found a different URL (likely an MP4) switch to it
+          if (typeof best === 'number' && best !== embedIndex) {
+            setCurrentUrlIndex(best);
+            // ensure playing after switch
+            setIsPlaying(true);
+          }
+        } catch (err) {
+          // ignore probe errors — embed will continue
+        }
+      })();
+    } else {
+      // Non-archive sources: pick first option and play
+      setCurrentUrlIndex(0);
+      setIsPlaying(true);
+    }
   };
 
   // 7. Handle close with proper cleanup
@@ -195,7 +214,7 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
               <div className="absolute inset-0 flex items-center justify-center z-10">
                 <div className="text-center">
                   <button
-                    onClick={() => { setHasUserInteracted(true); setIsPlaying(true); }}
+                    onClick={handleManualPlay}
                     className="bg-yellow-400 text-black px-8 py-4 rounded-lg text-xl font-semibold hover:bg-yellow-300 transition-colors flex items-center gap-3 shadow-lg"
                   >
                     <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
