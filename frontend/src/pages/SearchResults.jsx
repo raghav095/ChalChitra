@@ -24,27 +24,51 @@ const SearchResults = () => {
   }, [q]);
 
   if (results === null) {
-    return <div className="p-8 text-white">Searching...</div>;
+    return (
+      <div className="min-h-screen pt-24 bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)] text-white flex items-start">
+        <div className="w-full max-w-6xl mx-auto px-4 py-8">
+          <div className="text-white">Searching...</div>
+        </div>
+      </div>
+    );
   }
 
+  const base_url = 'https://image.tmdb.org/t/p/w500';
+
   return (
-    <div className="p-8 text-white">
-      <h2 className="text-2xl font-bold mb-4">Search results for "{q}"</h2>
-      {results.length === 0 ? (
-        <div className="text-gray-300">No results found.</div>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {results.map(r => (
-            <Link key={r.tmdbId} to={`/movie/${r.tmdbId}`} className="block bg-slate-800 rounded overflow-hidden">
-              <img src={`https://image.tmdb.org/t/p/w500${r.posterPath}`} alt={r.title} className="w-full h-56 object-cover" />
-              <div className="p-2">
-                <div className="text-white font-medium truncate">{r.title}</div>
-                <div className="text-gray-400 text-sm">{r.releaseDate?.substring(0,4)}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+    <div className="min-h-screen pt-24 bg-[linear-gradient(90deg,_#1a2233_0%,_#283a5b_100%)] text-white">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4">{q ? `Search results for "${q}"` : 'Search'}</h2>
+
+        {!q ? (
+          <div className="text-gray-300 bg-slate-800 bg-opacity-40 p-6 rounded">Type a movie title into the search bar to find movies.</div>
+        ) : results.length === 0 ? (
+          <div className="text-gray-300 bg-slate-800 bg-opacity-40 p-6 rounded">
+            <p className="mb-2">No results found for <span className="font-semibold text-white">"{q}"</span>.</p>
+            <p className="text-sm">Try different keywords, remove punctuation, or try a shorter title (e.g. "chaplin").</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {results.map(r => (
+              <Link key={r.tmdbId || r._id} to={`/movie/${r.tmdbId || r._id}`} className="block bg-slate-800 rounded overflow-hidden">
+                {r.posterPath ? (
+                  <img
+                    src={r.posterPath.startsWith('http') ? r.posterPath : `${base_url}${r.posterPath}`}
+                    alt={r.title}
+                    className="w-full h-56 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-56 flex items-center justify-center text-gray-400">No image</div>
+                )}
+                <div className="p-2">
+                  <div className="text-white font-medium truncate">{r.title}</div>
+                  <div className="text-gray-400 text-sm">{r.releaseDate?.substring(0,4)}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
