@@ -169,6 +169,8 @@ License
 
 This project is provided for coursework purposes. Add a LICENSE file if you need to specify one.
 
+![Landing Page](Chalchitra-app\frontend\src\assets\landingpage.png)
 
+![Movie Details](Chalchitra-app\frontend\src\assets\moviedetails.png)
 
 
