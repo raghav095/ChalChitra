@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
 const SearchResults = () => {
   const [params] = useSearchParams();
   const q = params.get('q') || '';
   const [results, setResults] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
@@ -43,9 +44,35 @@ const SearchResults = () => {
         {!q ? (
           <div className="text-gray-300 bg-slate-800 bg-opacity-40 p-6 rounded">Type a movie title into the search bar to find movies.</div>
         ) : results.length === 0 ? (
-          <div className="text-gray-300 bg-slate-800 bg-opacity-40 p-6 rounded">
-            <p className="mb-2">No results found for <span className="font-semibold text-white">"{q}"</span>.</p>
-            <p className="text-sm">Try different keywords, remove punctuation, or try a shorter title (e.g. "chaplin").</p>
+          <div className="text-gray-300 bg-slate-800 bg-opacity-40 p-6 rounded flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="mb-2">No results found for <span className="font-semibold text-white">"{q}"</span>.</p>
+              <p className="text-sm">Try different keywords, remove punctuation, or try a shorter title — e.g. <span className="font-medium text-white">"The Charlie Chaplin Festival"</span>.</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  // Clear query and focus search input in navbar
+                  navigate('/search');
+                  setTimeout(() => {
+                    const input = document.querySelector('input[placeholder="Movies, series, cartoons..."]');
+                    if (input) input.focus();
+                  }, 80);
+                }}
+                className="bg-yellow-400 text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-300 transition"
+              >
+                Try again
+              </button>
+              <button
+                onClick={() => {
+                  // Suggest a sample search
+                  navigate(`/search?q=${encodeURIComponent('The Charlie Chaplin Festival')}`);
+                }}
+                className="px-4 py-2 border border-white/20 rounded-md text-white hover:bg-white/5 transition"
+              >
+                Search example
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
