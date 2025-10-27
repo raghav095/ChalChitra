@@ -74,6 +74,15 @@ const ImageText = () => {
           90% { opacity: 1; }
           100% { opacity: 0; }
         }
+        /* Responsive adjustments for small screens */
+        @media (max-width: 640px) {
+          .hero-content-overlay { top: 48%; padding: 0 1rem; transform: translate(-50%, -50%); }
+          .timeless-heading { font-size: 1.6rem; white-space: normal; margin-bottom: 0.8rem; }
+          .hero-heading { font-size: 1.1rem; margin-bottom: 0.6rem; display: block; }
+          .rotating-word { font-size: 1.1rem; margin-left: 0.4rem; }
+          .hero-sub { font-size: 0.95rem; margin-bottom: 1rem; }
+          .login-gradient-btn, .hero-content-overlay button { padding: 0.6rem 1rem; font-size: 0.95rem; }
+        }
         .hero-sub {
           font-family: 'Poppins', 'Cinzel', serif;
           color: #E0C9A6;

@@ -11,6 +11,7 @@ const Navbarmain = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   
     const handleLogout = () => {
@@ -51,6 +52,17 @@ const Navbarmain = () => {
         </div>
       </div>
 
+      {/* Mobile menu toggle */}
+      <div className="sm:hidden">
+        <button
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          className="p-2 rounded-md text-gray-200 bg-white/5 hover:bg-white/10 focus:outline-none"
+          aria-label="Open menu"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+
       {/* === Right Side: Profile === */}
       {isAuthenticated && (
         <div className="relative inline-block">
@@ -81,6 +93,23 @@ const Navbarmain = () => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Mobile menu panel */}
+      {showMobileMenu && (
+        <div className="absolute top-full right-0 left-0 bg-slate-900 bg-opacity-95 p-4 sm:hidden z-40">
+          <div className="mb-3">
+            <SearchBar />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Link to="/Mainpage" onClick={() => setShowMobileMenu(false)} className="px-3 py-2 rounded bg-white/5 text-white text-center">Home</Link>
+            {isAuthenticated ? (
+              <button onClick={() => { handleLogout(); setShowMobileMenu(false); }} className="px-3 py-2 rounded bg-red-600 text-white">Logout</button>
+            ) : (
+              <Link to="/register" onClick={() => setShowMobileMenu(false)} className="px-3 py-2 rounded bg-yellow-400 text-zinc-800 text-center">Login / Join</Link>
+            )}
+          </div>
         </div>
       )}
     </nav>

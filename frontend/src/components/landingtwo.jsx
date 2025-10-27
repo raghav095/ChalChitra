@@ -42,6 +42,12 @@ const Info = () => {
           margin-bottom: 2rem;
           letter-spacing: 0.07em;
         }
+        @media (max-width: 640px) {
+          .classic-title { font-size: 1.5rem; margin-bottom: 1rem; }
+          .classic-feature-card { padding: 1rem; }
+          .classic-feature-title { font-size: 1rem; }
+          .classic-feature-desc { font-size: 0.9rem; }
+        }
         .classic-title span {
           color: #e7d9b2;
         }
