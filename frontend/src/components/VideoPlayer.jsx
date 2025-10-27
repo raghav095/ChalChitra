@@ -244,48 +244,67 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
                   onError={(e) => handleError(e)}
                   controlsList="nodownload"
                 />
-              ) : ( 
-                <ReactPlayer
-                  key={currentUrl} // Force re-render when URL changes
-                  ref={playerRef}
-                  url={currentUrl}
-                  controls={true}
-                  playing={isPlaying}
-                  width="100%"
-                  height="100%"
-                  onError={handleError}
-                  onReady={handleReady}
-                  onPlay={handlePlay}
-                  onPause={handlePause}
-                  onBuffer={() => setIsLoading(true)}
-                  onBufferEnd={() => setIsLoading(false)}
-                  pip={false}
-                  stopOnUnmount={true}
-                  config={{
-                    youtube: {
-                      playerVars: {
-                        autoplay: 0,
-                        controls: 1,
-                        rel: 0,
-                        showinfo: 0,
-                        modestbranding: 1,
-                        enablejsapi: 1
-                      }
-                    },
-                    file: {
-                      attributes: {
-                        playsInline: true,
-                        preload: 'metadata',
-                        crossOrigin: 'anonymous',
-                        controlsList: 'nodownload'
+              ) : (
+                // If this is an Archive.org embed URL, render a plain iframe first
+                // so the Archive player UI can load and begin playback. We append
+                // autoplay=1 so the embed will attempt to start after the user
+                // interaction. The background probe may switch to an MP4 later.
+                (isArchiveUrl && currentUrl && currentUrl.includes('/embed/')) ? (
+                  <iframe
+                    key={currentUrl}
+                    src={currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'autoplay=1'}
+                    title="Internet Archive Player"
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen; encrypted-media"
+                    allowFullScreen
+                    onLoad={() => { setIsReady(true); setIsLoading(false); }}
+                    className="w-full h-full bg-black"
+                  />
+                ) : (
+                  <ReactPlayer
+                    key={currentUrl} // Force re-render when URL changes
+                    ref={playerRef}
+                    url={currentUrl}
+                    controls={true}
+                    playing={isPlaying}
+                    width="100%"
+                    height="100%"
+                    onError={handleError}
+                    onReady={handleReady}
+                    onPlay={handlePlay}
+                    onPause={handlePause}
+                    onBuffer={() => setIsLoading(true)}
+                    onBufferEnd={() => setIsLoading(false)}
+                    pip={false}
+                    stopOnUnmount={true}
+                    config={{
+                      youtube: {
+                        playerVars: {
+                          autoplay: 0,
+                          controls: 1,
+                          rel: 0,
+                          showinfo: 0,
+                          modestbranding: 1,
+                          enablejsapi: 1
+                        }
                       },
-                      forceVideo: true,
-                      forceAudio: false,
-                      forceHLS: false,
-                      forceDASH: false
-                    }
-                  }}
-                />
+                      file: {
+                        attributes: {
+                          playsInline: true,
+                          preload: 'metadata',
+                          crossOrigin: 'anonymous',
+                          controlsList: 'nodownload'
+                        },
+                        forceVideo: true,
+                        forceAudio: false,
+                        forceHLS: false,
+                        forceDASH: false
+                      }
+                    }}
+                  />
+                )
               )
             )}
           </div>
