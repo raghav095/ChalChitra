@@ -17,6 +17,23 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
   const isArchiveUrl = videoUrl?.includes('archive.org');
   const isValidUrl = videoUrl && (videoUrl.startsWith('http') || videoUrl.startsWith('blob:'));
 
+  // Helper to extract YouTube ID and produce embed URL
+  const getYouTubeId = (url) => {
+    if (!url) return null;
+    const m = url.match(/(?:v=|\/)([A-Za-z0-9_-]{6,})/);
+    if (m && m[1]) return m[1];
+    const short = url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
+    if (short && short[1]) return short[1];
+    return null;
+  };
+
+  const getYouTubeEmbedUrl = (url) => {
+    const id = getYouTubeId(url);
+    if (!id) return url;
+    // Use privacy-enhanced nocookie domain and include modestbranding
+    return `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1`;
+  };
+
   // Generate multiple URL options for Archive.org videos
   const getArchiveUrls = (url) => {
     if (!isArchiveUrl || !url.includes('/embed/')) return [url];
@@ -32,7 +49,8 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
     ];
   };
 
-  const urlOptions = isArchiveUrl ? getArchiveUrls(videoUrl) : [videoUrl];
+  // For YouTube, prefer embed URL first (iframe) then fall back to original watch URL
+  const urlOptions = isArchiveUrl ? getArchiveUrls(videoUrl) : (isYouTubeUrl ? [getYouTubeEmbedUrl(videoUrl), videoUrl] : [videoUrl]);
   const currentUrl = urlOptions[currentUrlIndex];
 
   // Try to quickly probe the list of urlOptions and pick the first reachable one (fast HEAD request with timeout).
@@ -265,47 +283,64 @@ const VideoPlayer = ({ videoUrl, onClose }) => {
                     className="w-full h-full bg-black"
                   />
                 ) : (
-                  <ReactPlayer
-                    key={currentUrl} // Force re-render when URL changes
-                    ref={playerRef}
-                    url={currentUrl}
-                    controls={true}
-                    playing={isPlaying}
-                    width="100%"
-                    height="100%"
-                    onError={handleError}
-                    onReady={handleReady}
-                    onPlay={handlePlay}
-                    onPause={handlePause}
-                    onBuffer={() => setIsLoading(true)}
-                    onBufferEnd={() => setIsLoading(false)}
-                    pip={false}
-                    stopOnUnmount={true}
-                    config={{
-                      youtube: {
-                        playerVars: {
-                          autoplay: 0,
-                          controls: 1,
-                          rel: 0,
-                          showinfo: 0,
-                          modestbranding: 1,
-                          enablejsapi: 1
-                        }
-                      },
-                      file: {
-                        attributes: {
-                          playsInline: true,
-                          preload: 'metadata',
-                          crossOrigin: 'anonymous',
-                          controlsList: 'nodownload'
+                  // If this is a YouTube embed (preferred), render an iframe for more reliable autoplay
+                  (isYouTubeUrl && currentUrl && currentUrl.includes('youtube-nocookie.com/embed')) ? (
+                    <iframe
+                      key={currentUrl}
+                      src={currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'autoplay=1'}
+                      title="YouTube Player"
+                      width="100%"
+                      height="100%"
+                      frameBorder="0"
+                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                      allowFullScreen
+                      onLoad={() => { setIsReady(true); setIsLoading(false); }}
+                      className="w-full h-full bg-black"
+                    />
+                  ) : (
+                    <ReactPlayer
+                      key={currentUrl} // Force re-render when URL changes
+                      ref={playerRef}
+                      url={currentUrl}
+                      controls={true}
+                      playing={isPlaying}
+                      width="100%"
+                      height="100%"
+                      onError={handleError}
+                      onReady={handleReady}
+                      onPlay={handlePlay}
+                      onPause={handlePause}
+                      onBuffer={() => setIsLoading(true)}
+                      onBufferEnd={() => setIsLoading(false)}
+                      pip={false}
+                      stopOnUnmount={true}
+                      config={{
+                        youtube: {
+                          playerVars: {
+                            autoplay: 0,
+                            controls: 1,
+                            rel: 0,
+                            showinfo: 0,
+                            modestbranding: 1,
+                            enablejsapi: 1,
+                            origin: typeof window !== 'undefined' ? window.location.origin : undefined
+                          }
                         },
-                        forceVideo: true,
-                        forceAudio: false,
-                        forceHLS: false,
-                        forceDASH: false
-                      }
-                    }}
-                  />
+                        file: {
+                          attributes: {
+                            playsInline: true,
+                            preload: 'metadata',
+                            crossOrigin: 'anonymous',
+                            controlsList: 'nodownload'
+                          },
+                          forceVideo: true,
+                          forceAudio: false,
+                          forceHLS: false,
+                          forceDASH: false
+                        }
+                      }}
+                    />
+                  )
                 )
               )
             )}
