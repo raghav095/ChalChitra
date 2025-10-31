@@ -9,6 +9,7 @@ import { login } from "./features/userSlice.js";
 import api from './api/axios';
 import MovieDetails from "./components/MoviesDetails.jsx"
 import SearchResults from './pages/SearchResults.jsx';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function AppContent() {
@@ -46,7 +47,11 @@ function AppContent() {
       {location.pathname === "/" && <Navbar />}
       <Routes>
         <Route path="/" element={<HeroSection />} />
-        <Route path="/Mainpage" element={<Mainpage />} />
+        <Route path="/Mainpage" element={
+          <ProtectedRoute>
+            <Mainpage />
+          </ProtectedRoute>
+        } />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/search" element={<SearchResults />} />
       </Routes>

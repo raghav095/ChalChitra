@@ -18,31 +18,39 @@ passport.use(
         callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://moviesmania-1.onrender.com/auth/google/callback",
       },
     async (accessToken, refreshToken, profile, done) => {
+      console.log('Google OAuth callback invoked for profile:', { id: profile.id, email: profile.emails?.[0]?.value, displayName: profile.displayName });
       try {
-        let user = await User.findOne({ email: profile.emails[0].value });
+        const email = profile.emails?.[0]?.value;
+        if (!email) {
+          throw new Error('No email returned from Google profile');
+        }
 
+        // Use an atomic upsert to avoid race conditions or duplicate-key errors.
+        // Set a strong random password for OAuth-created users to satisfy the
+        // schema requirement (password is required) while avoiding collisions.
+        const crypto = await import('crypto');
+        const randomPassword = crypto.randomBytes(32).toString('hex');
+
+        const update = {
+          $setOnInsert: {
+            username: profile.displayName || email.split('@')[0],
+            email,
+            password: randomPassword,
+          }
+        };
+
+        const opts = { upsert: true, new: true, setDefaultsOnInsert: true };
+        let user = await User.findOneAndUpdate({ email }, update, opts);
+
+        // If for some reason findOneAndUpdate returned null, try to fetch existing
         if (!user) {
-            // Create user. If creation fails due to a race/unique-index, try
-            // to recover by fetching the existing user by email.
-            try {
-              user = await User.create({
-                username: profile.displayName,
-                email: profile.emails[0].value,
-                password: Math.random().toString(36),
-              });
-            } catch (createErr) {
-              console.error('Error creating Google user, attempting fallback lookup', createErr.message);
-              const fallback = await User.findOne({ email: profile.emails[0].value });
-              if (fallback) {
-                user = fallback;
-              } else {
-                throw createErr;
-              }
-            }
+          user = await User.findOne({ email });
+          if (!user) throw new Error('Failed to create or retrieve user during Google OAuth');
         }
 
         return done(null, user);
       } catch (err) {
+        console.error('Passport Google callback error:', err);
         return done(err, null);
       }
     }
