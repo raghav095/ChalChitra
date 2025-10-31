@@ -11,20 +11,34 @@ console.log("GOOGLE_CLIENT_ID from googleauth.js:", process.env.GOOGLE_CLIENT_ID
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://moviesmania-1.onrender.com/auth/google/callback",
-    },
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        // Make callback URL configurable via env so you can use different
+        // OAuth redirect URIs for local dev and production.
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://moviesmania-1.onrender.com/auth/google/callback",
+      },
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ email: profile.emails[0].value });
 
         if (!user) {
-          user = await User.create({
-            username: profile.displayName,
-            email: profile.emails[0].value,
-            password: Math.random().toString(36),
-          });
+            // Create user. If creation fails due to a race/unique-index, try
+            // to recover by fetching the existing user by email.
+            try {
+              user = await User.create({
+                username: profile.displayName,
+                email: profile.emails[0].value,
+                password: Math.random().toString(36),
+              });
+            } catch (createErr) {
+              console.error('Error creating Google user, attempting fallback lookup', createErr.message);
+              const fallback = await User.findOne({ email: profile.emails[0].value });
+              if (fallback) {
+                user = fallback;
+              } else {
+                throw createErr;
+              }
+            }
         }
 
         return done(null, user);
