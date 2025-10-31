@@ -47,9 +47,13 @@ app.use(session({
     dbName: process.env.DB_NAME,
     collectionName: "sessions",
   }),
+  // Use secure cookies only in production (HTTPS). During local development
+  // we allow non-secure cookies to make testing easier.
   cookie: {
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === 'production',
+    // In production we need 'none' for cross-site cookies (frontend on different origin).
+    // In development allow default (lax) behavior.
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   }
 }));
 

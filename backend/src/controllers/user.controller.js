@@ -95,10 +95,10 @@ const usersignin  = asyncHandler(async(req , res) => {
 
         const logedinuser = await User.findById(user._id).select("-password -refreshtokens")
 
-        const options = {
-                httpOnly :true ,
-                secure:true
-        }
+    const options = {
+        httpOnly : true,
+        secure: process.env.NODE_ENV === 'production'
+    }
 
 return res
 .status(200)
@@ -132,8 +132,8 @@ const logoutuser = asyncHandler(async(req , res) => {
     )
 
       const options ={
-    httpOnly : true ,
-    secure : true
+            httpOnly : true ,
+            secure : process.env.NODE_ENV === 'production'
   } 
 
   return res

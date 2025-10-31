@@ -6,6 +6,7 @@ import Mainpage from './pages/Mainpage.jsx';
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "./features/userSlice.js";
+import api from './api/axios';
 import MovieDetails from "./components/MoviesDetails.jsx"
 import SearchResults from './pages/SearchResults.jsx';
 import './App.css';
@@ -15,11 +16,29 @@ function AppContent() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
-    if (user && isAuthenticated === 'true') {
-      dispatch(login(JSON.parse(user)));
+    // Try server-side session first (works for Google OAuth and session-based logins)
+    async function fetchMe() {
+      try {
+        const res = await api.get('/users/me');
+        if (res?.data?.user) {
+          dispatch(login(res.data.user));
+          // Persist to localStorage for back-compat with existing logic
+          localStorage.setItem('user', JSON.stringify(res.data.user));
+          localStorage.setItem('isAuthenticated', 'true');
+          return;
+        }
+      } catch (err) {
+        // ignore - fall back to localStorage
+      }
+
+      const user = localStorage.getItem('user');
+      const isAuthenticated = localStorage.getItem('isAuthenticated');
+      if (user && isAuthenticated === 'true') {
+        dispatch(login(JSON.parse(user)));
+      }
     }
+
+    fetchMe();
   }, [dispatch]);
 
   return (
