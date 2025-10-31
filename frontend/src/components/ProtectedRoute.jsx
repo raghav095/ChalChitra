@@ -8,31 +8,31 @@ const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useSelector(state => state.user.isAuthenticated);
   const dispatch = useDispatch();
   // Start in a checking state so we don't immediately redirect on first render
-  // before the server-side session check has run. This prevents a flash-redirect
-  // when users have a valid server session cookie but Redux is not yet populated.
+  // before the server-side session check has run. Always probe the server for
+  // an active session on mount so reloads with a valid cookie are recognized.
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    // If already authenticated in Redux, we're done.
-    if (isAuthenticated) {
-      setChecking(false);
-      return () => { mounted = false; };
-    }
 
-    // Try server session once
-    setChecking(true);
-    api.get('/users/me').then(res => {
-      if (!mounted) return;
-      if (res?.data?.user) {
-        dispatch(login(res.data.user));
+    const probe = async () => {
+      setChecking(true);
+      try {
+        const res = await api.get('/users/me');
+        if (!mounted) return;
+        if (res?.data?.user) {
+          dispatch(login(res.data.user));
+        }
+      } catch (err) {
+        // ignore network/auth errors — we'll redirect if not authenticated
+      } finally {
+        if (mounted) setChecking(false);
       }
-    }).catch(() => {
-      // ignore
-    }).finally(() => { if (mounted) setChecking(false); });
+    };
 
+    probe();
     return () => { mounted = false; };
-  }, [isAuthenticated, dispatch]);
+  }, [dispatch]);
 
   if (checking) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
